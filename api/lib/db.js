@@ -1,4 +1,23 @@
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+
+// Cargar variables de entorno locales desde .env si existe y no están definidas
+const envFile = path.resolve(__dirname, '../../.env');
+if (fs.existsSync(envFile)) {
+  const lines = fs.readFileSync(envFile, 'utf8').split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const idx = trimmed.indexOf('=');
+      if (idx !== -1) {
+        const key = trimmed.substring(0, idx).trim();
+        const val = trimmed.substring(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+        if (!process.env[key]) process.env[key] = val;
+      }
+    }
+  }
+}
 
 let pgPool = null;
 
@@ -8,11 +27,11 @@ if (process.env.DATABASE_URL) {
     const { Pool } = require('pg');
     pgPool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      ssl: { rejectUnauthorized: false }
     });
-    console.log('Conexión a PostgreSQL configurada.');
+    console.log('✅ Conexión a PostgreSQL (Supabase) configurada con éxito.');
   } catch (err) {
-    console.warn('Error inicializando Pool PG, utilizando almacén local en memoria.', err.message);
+    console.warn('⚠️ Error inicializando Pool PG, utilizando almacén local en memoria:', err.message);
   }
 }
 
