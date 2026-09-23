@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderAuthenticatedState() {
     if (!currentUser) return;
 
-    // Actualizar Cabecera
+    // 1. Actualizar Cabecera (Navbar)
     if (loginTriggerBtn) loginTriggerBtn.style.display = 'none';
     if (userMenuWrapper) userMenuWrapper.style.display = 'inline-flex';
 
@@ -135,16 +135,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (dropdownUserName) dropdownUserName.textContent = currentUser.nombre_completo || 'Funcionario';
     if (dropdownUserRole) dropdownUserRole.textContent = `${currentUser.servicio || 'Servicio Hospitalario'} • ID: ${currentUser.id_empleado}`;
 
-    // Mostrar enlace a Panel Admin si tiene privilegios
+    const userNavName = document.getElementById('userNavName');
+    if (userNavName) userNavName.textContent = currentUser.nombre_completo || 'Funcionario';
+
+    // 2. Actualizar Tarjeta de Sesión Activa en el Hero (Inicio)
+    const heroAuthCard = document.getElementById('heroAuthCard');
+    const heroAuthAvatar = document.getElementById('heroAuthAvatar');
+    const heroAuthName = document.getElementById('heroAuthName');
+    const heroAuthRole = document.getElementById('heroAuthRole');
+    if (heroAuthCard) {
+      heroAuthCard.style.display = 'flex';
+      if (heroAuthAvatar) heroAuthAvatar.textContent = initials;
+      if (heroAuthName) heroAuthName.textContent = currentUser.nombre_completo || 'Funcionario';
+      if (heroAuthRole) {
+        heroAuthRole.textContent = `${currentUser.servicio || 'Servicio Hospitalario'} • ${currentUser.ya_voto ? '✓ Ya participaste en este ciclo' : '1 voto disponible'}`;
+      }
+    }
+
+    if (heroCtaBtn) {
+      heroCtaBtn.innerHTML = `
+        <span>Ir a mi Formulario de Reconocimiento</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      `;
+    }
+
+    // 3. Mostrar enlace a Panel Admin si tiene privilegios
     if (adminPanelLink) {
       adminPanelLink.style.display = currentUser.es_admin ? 'flex' : 'none';
     }
 
-    // Ocultar tarjeta de invitado y mostrar formulario de felicitación
+    // 4. Ocultar tarjeta de invitado y mostrar formulario de felicitación
     if (formGuestCard) formGuestCard.style.display = 'none';
     if (formAuthContainer) formAuthContainer.style.display = 'block';
 
-    // Actualizar Banner de Votación (Control 1 Funcionario = 1 Voto)
+    // 5. Actualizar Banner de Votación (Control 1 Funcionario = 1 Voto)
     if (voterStatusBanner) {
       if (currentUser.ya_voto) {
         // YA VOTÓ: Bloquear formulario y mostrar aviso
@@ -186,6 +213,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loginTriggerBtn) loginTriggerBtn.style.display = 'inline-flex';
     if (userMenuWrapper) userMenuWrapper.style.display = 'none';
     if (adminPanelLink) adminPanelLink.style.display = 'none';
+
+    // Ocultar tarjeta de usuario en Hero y restaurar botón CTA
+    const heroAuthCard = document.getElementById('heroAuthCard');
+    if (heroAuthCard) heroAuthCard.style.display = 'none';
+
+    if (heroCtaBtn) {
+      heroCtaBtn.innerHTML = `
+        <span>Enviar Reconocimiento</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      `;
+    }
 
     // Para Invitados: Ocultar formulario de felicitación y mostrar tarjeta de acceso exclusivo
     if (formAuthContainer) formAuthContainer.style.display = 'none';
@@ -325,6 +366,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         cerrarModalAuth();
         renderAuthenticatedState();
+
+        // Desplazar automáticamente hacia el formulario/panel del usuario
+        setTimeout(() => {
+          const formularioSec = document.getElementById('formulario-seccion');
+          if (formularioSec) {
+            formularioSec.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
 
         mostrarToast(
           `¡Bienvenido(a), ${currentUser.nombre_completo}!`,
