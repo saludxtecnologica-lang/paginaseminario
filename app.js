@@ -347,15 +347,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
 
-  // Botones de demostración rápida
-  document.querySelectorAll('.demo-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      loginIdEmpleado.value = btn.getAttribute('data-id');
-      loginPin.value = btn.getAttribute('data-pin');
-      loginForm.dispatchEvent(new Event('submit'));
-    });
-  });
-
   // Procesar Formulario de Login
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
