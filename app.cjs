@@ -2,8 +2,8 @@
  * Reconocimiento Hospitalario - Servidor Backend Express (Node.js / CommonJS)
  * Optimizado para despliegues Serverless en Vercel y ejecución local.
  * 
- * Gestiona correctamente archivos estáticos (CSS, JS cliente, imágenes),
- * cabeceras MIME y rutas de API sin dependencias del DOM en el servidor.
+ * Configuración de Express para servir archivos estáticos desde 'public'
+ * y directorio raíz con tipos MIME correctos (CSS, JS, imágenes).
  */
 
 const fs = require('fs');
@@ -45,19 +45,15 @@ app.all('/api/admin/funcionarios', require('./api/admin/funcionarios'));
 app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
 
 // ==============================================================================
-// 2. CONFIGURACIÓN DE ARCHIVOS ESTÁTICOS (CSS, JS Cliente, Imágenes)
+// 2. SERVICIO DE ARCHIVOS ESTÁTICOS (PUBLIC & ROOT)
 // ==============================================================================
 
-// Directorios base para resolución en Local y en Vercel (/var/task)
-const ROOT_DIR = __dirname;
-const CWD_DIR = process.cwd();
-
+// Opciones de Express Static con cabeceras MIME explícitas
 const staticOptions = {
   dotfiles: 'ignore',
   etag: true,
   maxAge: '1d',
   setHeaders: (res, filePath) => {
-    // Forzar el Content-Type correcto para evitar bloqueos del navegador en Vercel
     if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css; charset=utf-8');
     } else if (filePath.endsWith('.js')) {
@@ -72,81 +68,59 @@ const staticOptions = {
   }
 };
 
-// Rutas explícitas para archivos clave del frontend (styles.css, app.js, admin.css, admin.js)
-app.get(['/styles.css', '/admin.css', '/app.js', '/admin.js'], (req, res, next) => {
-  const fileName = path.basename(req.path);
-  const candidates = [
-    path.join(ROOT_DIR, fileName),
-    path.join(CWD_DIR, fileName),
-    path.join(ROOT_DIR, 'public', fileName),
-    path.join(CWD_DIR, 'public', fileName)
-  ];
-
-  for (const candidate of candidates) {
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
-      const mime = fileName.endsWith('.css') 
-        ? 'text/css; charset=utf-8' 
-        : 'application/javascript; charset=utf-8';
-      res.setHeader('Content-Type', mime);
-      return res.sendFile(candidate);
-    }
-  }
-  next();
-});
-
-// Servir carpetas de recursos estáticos
-app.use(express.static(ROOT_DIR, staticOptions));
-if (CWD_DIR !== ROOT_DIR) {
-  app.use(express.static(CWD_DIR, staticOptions));
+// 1. Servir prioritariamente desde la carpeta 'public'
+const publicDir = path.join(__dirname, 'public');
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir, staticOptions));
 }
-app.use(express.static(path.join(ROOT_DIR, 'public'), staticOptions));
-app.use(express.static(path.join(CWD_DIR, 'public'), staticOptions));
 
-// Servir directorio de imágenes /assets
-app.use('/assets', express.static(path.join(ROOT_DIR, 'assets'), staticOptions));
-app.use('/assets', express.static(path.join(CWD_DIR, 'assets'), staticOptions));
+// 2. Servir también desde la raíz del proyecto (__dirname) como respaldo
+app.use(express.static(__dirname, staticOptions));
+
+// 3. Servir explícitamente la carpeta 'assets'
+app.use('/assets', express.static(path.join(__dirname, 'assets'), staticOptions));
+if (fs.existsSync(path.join(publicDir, 'assets'))) {
+  app.use('/assets', express.static(path.join(publicDir, 'assets'), staticOptions));
+}
 
 // ==============================================================================
-// 3. RUTAS HTML Y MANEJO DE 404
+// 3. RUTAS HTML Y CONTROL DE 404 (PROTECCIÓN CONTRA TEXT/HTML EN CSS)
 // ==============================================================================
 
 // Ruta amigable /admin -> admin.html
 app.get('/admin', (req, res) => {
-  const adminPath = fs.existsSync(path.join(ROOT_DIR, 'admin.html'))
-    ? path.join(ROOT_DIR, 'admin.html')
-    : path.join(CWD_DIR, 'admin.html');
+  const adminPath = fs.existsSync(path.join(publicDir, 'admin.html'))
+    ? path.join(publicDir, 'admin.html')
+    : path.join(__dirname, 'admin.html');
   res.sendFile(adminPath);
 });
 
 // Ruta principal / -> index.html
 app.get('/', (req, res) => {
-  const indexPath = fs.existsSync(path.join(ROOT_DIR, 'index.html'))
-    ? path.join(ROOT_DIR, 'index.html')
-    : path.join(CWD_DIR, 'index.html');
+  const indexPath = fs.existsSync(path.join(publicDir, 'index.html'))
+    ? path.join(publicDir, 'index.html')
+    : path.join(__dirname, 'index.html');
   res.sendFile(indexPath);
 });
 
-// Manejador final
+// Manejador 404 final
 app.use((req, res) => {
-  // A. Rutas API no encontradas -> JSON 404
+  // A. Si es un endpoint de API que no existe -> responder JSON 404
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: `Ruta API no encontrada: ${req.path}` });
   }
 
-  // B. RECURSOS ESTÁTICOS NO ENCONTRADOS -> NUNCA responder con index.html (evita CSS roto)
+  // B. REGLA DE ORO: Si se pide un recurso estático (CSS, JS, imagen) que no existe,
+  // NUNCA responder con HTML para evitar que el navegador rompa los estilos.
   if (/\.(css|js|png|jpe?g|gif|svg|ico|webp|woff2?|ttf|eot|map)$/i.test(req.path)) {
     return res.status(404).type('text/plain').send(`Archivo estático no encontrado: ${req.path}`);
   }
 
-  // C. Cualquier otra ruta web -> index.html
-  const indexPath = fs.existsSync(path.join(ROOT_DIR, 'index.html'))
-    ? path.join(ROOT_DIR, 'index.html')
-    : path.join(CWD_DIR, 'index.html');
-
-  if (fs.existsSync(indexPath)) {
-    return res.status(200).sendFile(indexPath);
-  }
-  res.status(404).send('Página no encontrada');
+  // C. Para navegación cliente SPA -> index.html
+  const indexPath = fs.existsSync(path.join(publicDir, 'index.html'))
+    ? path.join(publicDir, 'index.html')
+    : path.join(__dirname, 'index.html');
+  res.sendFile(indexPath);
 });
 
 // Exportación para Vercel Serverless Functions

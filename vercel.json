@@ -1,25 +1,13 @@
 {
   "version": 2,
-  "functions": {
-    "app.cjs": {
-      "includeFiles": "{styles.css,admin.css,app.js,admin.js,index.html,admin.html,assets/**,public/**}"
-    }
-  },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/app.cjs"
+      "source": "/api/(.*)",
+      "destination": "/app.cjs"
     },
     {
-      "src": "/admin",
-      "dest": "/admin.html"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/app.cjs"
+      "source": "/admin",
+      "destination": "/admin.html"
     }
   ],
   "env": {

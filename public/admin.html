@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Reconocimiento Hospitalario</title>
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ==================== HEADER ADMIN ==================== -->
+  <header class="admin-header">
+    <div class="admin-container admin-header-inner">
+      <div class="admin-brand">
+        <a href="/" class="brand-logo" title="Volver al sitio principal">
+          <span class="heart-icon-wrapper">
+            <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </span>
+          <span class="brand-name">Reconocimiento Hosp.</span>
+        </a>
+        <span class="admin-badge-pill">Administración Central</span>
+      </div>
+
+      <div class="admin-user-nav">
+        <a href="/" class="btn-back-public">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          <span>Ver Sitio Público</span>
+        </a>
+
+        <div class="admin-profile-pill">
+          <div class="avatar-sm" id="adminAvatar">A</div>
+          <div class="admin-profile-meta">
+            <strong id="adminName">Administrador</strong>
+            <small id="adminRole">Gestor de Personal</small>
+          </div>
+          <button class="btn-logout-mini" id="adminLogoutBtn" title="Cerrar sesión">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== CONTENIDO DEL PANEL ==================== -->
+  <main class="admin-main">
+    <div class="admin-container">
+      
+      <!-- Encabezado de Página -->
+      <div class="admin-page-header">
+        <div>
+          <h1 class="admin-page-title">Gestión de Padrón y Votación</h1>
+          <p class="admin-page-subtitle">Supervisión en tiempo real del ciclo de reconocimientos hospitalarios.</p>
+        </div>
+        
+        <div class="admin-header-actions">
+          <button class="btn btn-secondary-admin" id="btnResetCycle">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Reiniciar Ciclo de Votación</span>
+          </button>
+
+          <button class="btn btn-primary" id="btnOpenAddModal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Agregar Funcionario</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Métricas -->
+      <section class="admin-metrics-grid">
+        <div class="admin-metric-card">
+          <div class="metric-icon metric-icon-users">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-label">Padrón de Funcionarios</span>
+            <strong class="metric-value" id="statTotalUsers">0</strong>
+            <span class="metric-subtext">Personal habilitado para votar</span>
+          </div>
+        </div>
+
+        <div class="admin-metric-card">
+          <div class="metric-icon metric-icon-votes">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-label">Votos Emitidos</span>
+            <strong class="metric-value" id="statVoted">0</strong>
+            <span class="metric-subtext" id="statPending">0 pendientes</span>
+          </div>
+        </div>
+
+        <div class="admin-metric-card">
+          <div class="metric-icon metric-icon-rate">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 20V10"></path>
+              <path d="M12 20V4"></path>
+              <path d="M6 20v-6"></path>
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-label">Tasa de Participación</span>
+            <strong class="metric-value" id="statParticipation">0%</strong>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="participationBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabla del Padrón de Funcionarios -->
+      <section class="admin-table-section">
+        <div class="table-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="filterInput" placeholder="Buscar por nombre, ID o servicio..." autocomplete="off">
+          </div>
+
+          <div class="table-filter-stats">
+            <span id="filteredCount">Mostrando funcionarios</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table" id="funcionariosTable">
+            <thead>
+              <tr>
+                <th>ID / RUT</th>
+                <th>Nombre Completo</th>
+                <th>Servicio / Unidad</th>
+                <th>Cargo</th>
+                <th>Rol</th>
+                <th>Estado Voto</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td colspan="7" class="text-center py-4">Cargando padrón hospitalario...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODAL: AGREGAR FUNCIONARIO ==================== -->
+  <div class="modal-backdrop" id="addStaffModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Agregar Funcionario al Padrón</h3>
+        <button class="modal-close-btn" id="closeAddModalBtn" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <form id="addStaffForm" class="modal-form">
+        <div class="form-group">
+          <label class="form-label" for="newIdEmpleado">
+            ID de Empleado (RUT / Ficha) <span class="required-asterisk">*</span>
+          </label>
+          <input type="text" id="newIdEmpleado" class="form-input" placeholder="Ej: 12345678-9 o F-2041" required autocomplete="off">
+          <span class="field-hint">Identificador único con el que iniciará sesión.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newNombre">
+            Nombre Completo <span class="required-asterisk">*</span>
+          </label>
+          <input type="text" id="newNombre" class="form-input" placeholder="Ej: Dra. Claudia Benítez" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newServicio">
+            Servicio o Unidad Clínica <span class="required-asterisk">*</span>
+          </label>
+          <input type="text" id="newServicio" class="form-input" placeholder="Ej: Urgencias Adultos, Farmacia, Pabellón" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newCargo">
+            Cargo / Rol Clínico <span class="required-asterisk">*</span>
+          </label>
+          <select id="newCargo" class="form-input form-select" required>
+            <option value="TENS">TENS (Técnico en Enfermería)</option>
+            <option value="Kinesiólogo/a">Kinesiólogo / Kinesióloga</option>
+            <option value="Médico / Médica">Médico / Médica</option>
+            <option value="Enfermero/a">Enfermero / Enfermera</option>
+            <option value="Auxiliar">Auxiliar / Apoyo Clínico</option>
+            <option value="Matrón / Matrona">Matrón / Matrona</option>
+            <option value="Tecnólogo Médico">Tecnólogo Médico</option>
+            <option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
+            <option value="Químico Farmacéutico">Químico Farmacéutico</option>
+            <option value="Fonoaudiólogo/a">Fonoaudiólogo / Fonoaudióloga</option>
+            <option value="Administrativo/a">Personal Administrativo</option>
+            <option value="Personal de Salud">Otro Rol de Salud</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newPin">
+            PIN Inicial de Acceso <span class="required-asterisk">*</span>
+          </label>
+          <input type="password" id="newPin" class="form-input" placeholder="Mínimo 4 dígitos (Ej: 1234)" value="1234" required autocomplete="off">
+          <span class="field-hint">PIN temporal para que el funcionario ingrese a votar.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-simple-label">
+            <input type="checkbox" id="newIsAdmin">
+            <span>Asignar privilegios de Administrador</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="cancelAddModalBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="saveStaffBtn">Guardar en Padrón</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="adminToastContainer" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
