@@ -21,12 +21,20 @@ if (fs.existsSync(envFile)) {
 
 let pgPool = null;
 
-// Si existe DATABASE_URL, configurar cliente PostgreSQL
-if (process.env.DATABASE_URL) {
+// Detectar cadena de conexión de Supabase bajo cualquier nombre común en Vercel
+const rawDbUrl = process.env.DATABASE_URL || 
+                 process.env.POSTGRES_URL || 
+                 process.env.SUPABASE_DATABASE_URL || 
+                 process.env.POSTGRES_PRISMA_URL ||
+                 process.env.POSTGRES_URL_NON_POOLING;
+
+if (rawDbUrl) {
   try {
     const { Pool } = require('pg');
+    // Limpiar parámetros sslmode en la URL que pudieran entrar en conflicto con la configuración explícita
+    const cleanUrl = rawDbUrl.replace(/[?&]sslmode=[^&]+/g, '');
     pgPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: cleanUrl,
       ssl: { rejectUnauthorized: false }
     });
     console.log('✅ Conexión a PostgreSQL (Supabase) configurada con éxito.');

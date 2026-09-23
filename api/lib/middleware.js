@@ -15,6 +15,9 @@ async function parseBody(req) {
       return {};
     }
   }
+  if (req.readableEnded) {
+    return {};
+  }
 
   return new Promise((resolve) => {
     let body = '';

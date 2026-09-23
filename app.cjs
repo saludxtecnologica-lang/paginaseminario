@@ -36,13 +36,24 @@ app.use(express.urlencoded({ extended: true }));
 // ==============================================================================
 // 1. RUTAS DE API DEL BACKEND (Serverless)
 // ==============================================================================
-app.all('/api/auth/login', require('./api/auth/login'));
-app.all('/api/auth/logout', require('./api/auth/logout'));
-app.all('/api/auth/me', require('./api/auth/me'));
+app.all(['/api/auth/login', '/api/login'], require('./api/auth/login'));
+app.all(['/api/auth/logout', '/api/logout'], require('./api/auth/logout'));
+app.all(['/api/auth/me', '/api/me'], require('./api/auth/me'));
 app.all('/api/reconocimientos', require('./api/reconocimientos/index'));
 app.all('/api/admin/stats', require('./api/admin/stats'));
 app.all('/api/admin/funcionarios', require('./api/admin/funcionarios'));
 app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
+
+// Endpoint de diagnóstico rápido de Supabase
+app.get('/api/health', async (req, res) => {
+  const { getStats } = require('./api/lib/db');
+  try {
+    const stats = await getStats();
+    res.json({ status: 'ok', database: 'connected', stats });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
 
 // ==============================================================================
 // 2. SERVICIO DE ARCHIVOS ESTÁTICOS (PUBLIC & ROOT)

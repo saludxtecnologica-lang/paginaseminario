@@ -273,7 +273,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           body: JSON.stringify({ id_empleado, pin })
         });
 
-        const data = await res.json();
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          data = { error: `Error del servidor (${res.status}: ${res.statusText || 'Respuesta inesperada'})` };
+        }
 
         if (!res.ok) {
           mostrarErrorAuth(data.error || 'Credenciales incorrectas.');

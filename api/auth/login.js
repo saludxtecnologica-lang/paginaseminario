@@ -3,10 +3,11 @@ const { verifyPin, signToken } = require('../lib/auth');
 const { parseBody, sendJson, sendError } = require('../lib/middleware');
 
 module.exports = async function handler(req, res) {
-  // Configurar CORS
+  // Configurar CORS conforme a la especificación W3C / RFC 6454
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 
   if (req.method === 'OPTIONS') {
