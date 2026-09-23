@@ -14,15 +14,15 @@ ON CONFLICT DO NOTHING;
 INSERT INTO funcionarios (id_empleado, pin_hash, nombre_completo, servicio, cargo, es_admin, ya_voto)
 VALUES 
   -- Administrador del sistema
-  ('admin', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lR546t5P1tC8wE4zL6qYh2kP.s2aW', 'Dra. Natalia Morales', 'Dirección Médica & Bienestar', 'Médico / Médica', TRUE, FALSE),
+  ('admin', '$2a$10$xqkI6hFBrJhrC7voOIlksu9a63T7iLfJzUI7veaidGRzU8Pkh5xsa', 'Dra. Natalia Morales', 'Dirección Médica & Bienestar', 'Médico / Médica', TRUE, FALSE),
   
   -- Funcionarios regulares que aún NO han votado
-  ('11111111-1', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lR546t5P1tC8wE4zL6qYh2kP.s2aW', 'Dr. Andrés Gómez', 'Servicio de Urgencias', 'Médico / Médica', FALSE, FALSE),
-  ('22222222-2', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lR546t5P1tC8wE4zL6qYh2kP.s2aW', 'Enf. Lucía Méndez', 'Unidad de Cuidados Intensivos (UCI)', 'Enfermero/a', FALSE, FALSE),
-  ('33333333-3', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lR546t5P1tC8wE4zL6qYh2kP.s2aW', 'Tec. Rodrigo Tapia', 'Pabellón Quirúrgico', 'TENS', FALSE, FALSE),
+  ('11111111-1', '$2a$10$xqkI6hFBrJhrC7voOIlksu9a63T7iLfJzUI7veaidGRzU8Pkh5xsa', 'Dr. Andrés Gómez', 'Servicio de Urgencias', 'Médico / Médica', FALSE, FALSE),
+  ('22222222-2', '$2a$10$xqkI6hFBrJhrC7voOIlksu9a63T7iLfJzUI7veaidGRzU8Pkh5xsa', 'Enf. Lucía Méndez', 'Unidad de Cuidados Intensivos (UCI)', 'Enfermero/a', FALSE, FALSE),
+  ('33333333-3', '$2a$10$xqkI6hFBrJhrC7voOIlksu9a63T7iLfJzUI7veaidGRzU8Pkh5xsa', 'Tec. Rodrigo Tapia', 'Pabellón Quirúrgico', 'TENS', FALSE, FALSE),
   
   -- Funcionario que YA votó en este ciclo (para validar bloqueo de doble voto)
-  ('44444444-4', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lR546t5P1tC8wE4zL6qYh2kP.s2aW', 'Matr. Camila Soto', 'Maternidad y Neonatología', 'Matrón / Matrona', FALSE, TRUE)
+  ('44444444-4', '$2a$10$xqkI6hFBrJhrC7voOIlksu9a63T7iLfJzUI7veaidGRzU8Pkh5xsa', 'Matr. Camila Soto', 'Maternidad y Neonatología', 'Matrón / Matrona', FALSE, TRUE)
 ON CONFLICT (id_empleado) DO NOTHING;
 
 -- Reconocimiento inicial
