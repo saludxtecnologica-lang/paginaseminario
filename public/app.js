@@ -69,9 +69,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // =========================================================================
-  // 2. Comprobar Sesión Activa (`/api/auth/me`)
+  // 2. Comprobar Sesión Activa (`/api/auth/me` + Caché en localStorage)
   // =========================================================================
+  // Cargar de inmediato desde localStorage para activación instantánea
+  const cachedUserStr = localStorage.getItem('rh_user');
+  if (cachedUserStr) {
+    try {
+      currentUser = JSON.parse(cachedUserStr);
+      renderAuthenticatedState();
+    } catch (e) {
+      localStorage.removeItem('rh_user');
+    }
+  }
+
   async function checkSession() {
+    const token = localStorage.getItem('rh_token');
+    if (!token) {
+      currentUser = null;
+      renderGuestState();
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/me', {
         headers: getAuthHeaders()
@@ -80,14 +98,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (data.authenticated && data.user) {
         currentUser = data.user;
+        localStorage.setItem('rh_user', JSON.stringify(data.user));
         renderAuthenticatedState();
       } else {
+        localStorage.removeItem('rh_token');
+        localStorage.removeItem('rh_user');
         currentUser = null;
         renderGuestState();
       }
     } catch (err) {
-      console.warn('Servidor offline o inicializando, modo local:', err.message);
-      renderGuestState();
+      console.warn('Verificación de sesión en segundo plano diferida:', err.message);
+      if (currentUser) {
+        renderAuthenticatedState();
+      } else {
+        renderGuestState();
+      }
     }
   }
 
@@ -96,9 +121,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Actualizar Cabecera
     if (loginTriggerBtn) loginTriggerBtn.style.display = 'none';
-    if (userMenuWrapper) userMenuWrapper.style.display = 'block';
+    if (userMenuWrapper) userMenuWrapper.style.display = 'inline-flex';
 
-    const initials = currentUser.nombre_completo
+    const initials = (currentUser.nombre_completo || 'Usuario')
       .split(' ')
       .filter(w => w.length > 0)
       .slice(0, 2)
@@ -107,8 +132,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (userAvatarLetter) userAvatarLetter.textContent = initials;
     if (dropdownAvatarLetter) dropdownAvatarLetter.textContent = initials;
-    if (dropdownUserName) dropdownUserName.textContent = currentUser.nombre_completo;
-    if (dropdownUserRole) dropdownUserRole.textContent = `${currentUser.servicio} • ID: ${currentUser.id_empleado}`;
+    if (dropdownUserName) dropdownUserName.textContent = currentUser.nombre_completo || 'Funcionario';
+    if (dropdownUserRole) dropdownUserRole.textContent = `${currentUser.servicio || 'Servicio Hospitalario'} • ID: ${currentUser.id_empleado}`;
 
     // Mostrar enlace a Panel Admin si tiene privilegios
     if (adminPanelLink) {
@@ -120,33 +145,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (formAuthContainer) formAuthContainer.style.display = 'block';
 
     // Actualizar Banner de Votación (Control 1 Funcionario = 1 Voto)
-    if (currentUser.ya_voto) {
-      // YA VOTÓ: Bloquear formulario y mostrar aviso
-      voterStatusBanner.className = 'voter-status-banner voted';
-      voterStatusIcon.innerHTML = `
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      `;
-      voterStatusTitle.textContent = `✓ Reconocimiento ya emitido en este ciclo`;
-      voterStatusDesc.textContent = `Hola ${currentUser.nombre_completo}. Ya has participado en este periodo. La plataforma hospitalaria aplica la regla estricta de 1 voto por funcionario.`;
-      if (bannerLoginBtn) bannerLoginBtn.style.display = 'none';
+    if (voterStatusBanner) {
+      if (currentUser.ya_voto) {
+        // YA VOTÓ: Bloquear formulario y mostrar aviso
+        voterStatusBanner.className = 'voter-status-banner voted';
+        if (voterStatusIcon) {
+          voterStatusIcon.innerHTML = `
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+        }
+        if (voterStatusTitle) voterStatusTitle.textContent = `✓ Reconocimiento ya emitido en este ciclo`;
+        if (voterStatusDesc) voterStatusDesc.textContent = `Hola ${currentUser.nombre_completo}. Ya has participado en este periodo. La plataforma hospitalaria aplica la regla estricta de 1 voto por funcionario.`;
+        if (bannerLoginBtn) bannerLoginBtn.style.display = 'none';
 
-      // Bloquear campos visualmente
-      bloquearFormulario(true, 'Ya has participado en este ciclo');
-    } else {
-      // HABILITADO PARA VOTAR
-      voterStatusBanner.className = 'voter-status-banner ready';
-      voterStatusIcon.innerHTML = `
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        </svg>
-      `;
-      voterStatusTitle.textContent = `Habilitado para Reconocimiento Oficial`;
-      voterStatusDesc.textContent = `Identificado como: ${currentUser.nombre_completo} (${currentUser.servicio}) • Tienes 1 reconocimiento disponible.`;
-      if (bannerLoginBtn) bannerLoginBtn.style.display = 'none';
+        // Bloquear campos visualmente
+        bloquearFormulario(true, 'Ya has participado en este ciclo');
+      } else {
+        // HABILITADO PARA VOTAR
+        voterStatusBanner.className = 'voter-status-banner ready';
+        if (voterStatusIcon) {
+          voterStatusIcon.innerHTML = `
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          `;
+        }
+        if (voterStatusTitle) voterStatusTitle.textContent = `Habilitado para Reconocimiento Oficial`;
+        if (voterStatusDesc) voterStatusDesc.textContent = `Identificado como: ${currentUser.nombre_completo} (${currentUser.servicio || 'Servicio Hospitalario'}) • Tienes 1 reconocimiento disponible.`;
+        if (bannerLoginBtn) bannerLoginBtn.style.display = 'none';
 
-      bloquearFormulario(false);
+        bloquearFormulario(false);
+      }
     }
   }
 
@@ -287,8 +318,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           return;
         }
 
-        // Guardar token en localStorage
+        // Guardar token y usuario en localStorage
         localStorage.setItem('rh_token', data.token);
+        localStorage.setItem('rh_user', JSON.stringify(data.user));
         currentUser = data.user;
 
         cerrarModalAuth();
@@ -323,12 +355,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     logoutBtn.addEventListener('click', async () => {
       try {
         await fetch('/api/auth/logout', { method: 'POST' });
-      } catch (e) {}
-
+      } catch (e) {
+        console.warn('Logout offline:', e.message);
+      }
       localStorage.removeItem('rh_token');
+      localStorage.removeItem('rh_user');
       currentUser = null;
       renderGuestState();
-      mostrarToast('Sesión Finalizada', 'Has cerrado sesión correctamente.');
+      if (userDropdown) userDropdown.classList.remove('show');
+      mostrarToast('Sesión finalizada', 'Has cerrado tu sesión institucional.');
     });
   }
 
