@@ -112,7 +112,8 @@ const localState = {
       id_votante: '44444444-4',
       creado_en: new Date('2026-04-15T20:30:00Z')
     }
-  ]
+  ],
+  auditoria_eliminaciones: []
 };
 
 // ---------------------------------------------------------------------------
@@ -478,6 +479,201 @@ async function getTopReconocidos(limit = 5) {
   return sorted;
 }
 
+/**
+ * Consulta de Auditoría Completa de Reconocimientos (Solo para Administrador)
+ * Muestra quién felicitó a quién revelando al votante real aunque se haya marcado "anónimo"
+ */
+async function getAuditoriaReconocimientos() {
+  if (pgPool) {
+    const res = await pgPool.query(`
+      SELECT r.id, r.destinatario_nombre, r.destinatario_servicio, r.motivos, r.mensaje, r.es_anonimo, r.creado_en, r.id_votante,
+             f.nombre_completo as votante_nombre_real,
+             f.servicio as votante_servicio_real,
+             f.cargo as votante_cargo_real
+      FROM reconocimientos r
+      LEFT JOIN funcionarios f ON r.id_votante = f.id_empleado
+      ORDER BY r.creado_en DESC
+    `);
+    return res.rows;
+  }
+
+  return localState.reconocimientos.map(r => {
+    const votante = localState.funcionarios.find(f => f.id_empleado === r.id_votante);
+    return {
+      id: r.id,
+      destinatario_nombre: r.destinatario_nombre,
+      destinatario_servicio: r.destinatario_servicio,
+      motivos: r.motivos,
+      mensaje: r.mensaje,
+      es_anonimo: r.es_anonimo,
+      creado_en: r.creado_en,
+      id_votante: r.id_votante,
+      votante_nombre_real: votante ? votante.nombre_completo : 'Colega no encontrado',
+      votante_servicio_real: votante ? votante.servicio : '',
+      votante_cargo_real: votante ? votante.cargo : ''
+    };
+  });
+}
+
+/**
+ * Elimina una felicitación registrando su bitácora inmutable de auditoría
+ * Opcionalmente restituye el derecho a voto del funcionario emisor
+ */
+async function deleteReconocimientoConAuditoria({ id_reconocimiento, admin_id, admin_nombre, motivo_eliminacion = 'Eliminación administrativa', restituir_voto = true }) {
+  const recId = parseInt(id_reconocimiento, 10);
+  if (isNaN(recId)) {
+    throw new Error('ID de reconocimiento no válido.');
+  }
+
+  if (pgPool) {
+    // Asegurar tabla de auditoría en PostgreSQL
+    await pgPool.query(`
+      CREATE TABLE IF NOT EXISTS auditoria_eliminaciones (
+        id SERIAL PRIMARY KEY,
+        id_reconocimiento_original INT,
+        destinatario_nombre VARCHAR(150),
+        destinatario_servicio VARCHAR(100),
+        motivos TEXT,
+        mensaje TEXT,
+        es_anonimo BOOLEAN,
+        id_votante_real VARCHAR(50),
+        nombre_votante_real VARCHAR(150),
+        eliminado_por_id VARCHAR(50),
+        eliminado_por_nombre VARCHAR(150),
+        motivo_eliminacion TEXT,
+        fecha_eliminacion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        creado_en_original TIMESTAMP WITH TIME ZONE
+      )
+    `);
+
+    const client = await pgPool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // 1. Obtener la felicitación y datos del emisor
+      const selRes = await client.query(`
+        SELECT r.*, f.nombre_completo as votante_nombre_real
+        FROM reconocimientos r
+        LEFT JOIN funcionarios f ON r.id_votante = f.id_empleado
+        WHERE r.id = $1
+      `, [recId]);
+
+      if (selRes.rows.length === 0) {
+        throw new Error('El reconocimiento no existe o ya fue eliminado.');
+      }
+
+      const rec = selRes.rows[0];
+      const motivosStr = Array.isArray(rec.motivos) ? rec.motivos.join(', ') : String(rec.motivos || '');
+
+      // 2. Registrar en la bitácora inmutable de auditoría
+      const auditRes = await client.query(`
+        INSERT INTO auditoria_eliminaciones (
+          id_reconocimiento_original, destinatario_nombre, destinatario_servicio,
+          motivos, mensaje, es_anonimo, id_votante_real, nombre_votante_real,
+          eliminado_por_id, eliminado_por_nombre, motivo_eliminacion, creado_en_original
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        RETURNING *
+      `, [
+        rec.id,
+        rec.destinatario_nombre,
+        rec.destinatario_servicio,
+        motivosStr,
+        rec.mensaje || '',
+        Boolean(rec.es_anonimo),
+        rec.id_votante,
+        rec.votante_nombre_real || 'Desconocido',
+        admin_id || 'admin',
+        admin_nombre || 'Administrador',
+        motivo_eliminacion || 'Sin motivo especificado',
+        rec.creado_en
+      ]);
+
+      // 3. Eliminar de la tabla pública de reconocimientos
+      await client.query('DELETE FROM reconocimientos WHERE id = $1', [recId]);
+
+      // 4. Si se solicita restituir el voto, permitir volver a votar al emisor
+      if (restituir_voto && rec.id_votante) {
+        await client.query('UPDATE funcionarios SET ya_voto = FALSE, actualizado_en = NOW() WHERE id_empleado = $1', [rec.id_votante]);
+      }
+
+      await client.query('COMMIT');
+      return auditRes.rows[0];
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  // Fallback local en memoria
+  const idx = localState.reconocimientos.findIndex(r => r.id === recId);
+  if (idx === -1) {
+    throw new Error('El reconocimiento no existe o ya fue eliminado.');
+  }
+
+  const rec = localState.reconocimientos[idx];
+  const votante = localState.funcionarios.find(f => f.id_empleado === rec.id_votante);
+
+  const registroAudit = {
+    id: localState.auditoria_eliminaciones.length + 1,
+    id_reconocimiento_original: rec.id,
+    destinatario_nombre: rec.destinatario_nombre,
+    destinatario_servicio: rec.destinatario_servicio,
+    motivos: Array.isArray(rec.motivos) ? rec.motivos.join(', ') : rec.motivos,
+    mensaje: rec.mensaje,
+    es_anonimo: rec.es_anonimo,
+    id_votante_real: rec.id_votante,
+    nombre_votante_real: votante ? votante.nombre_completo : 'Desconocido',
+    eliminado_por_id: admin_id || 'admin',
+    eliminado_por_nombre: admin_nombre || 'Administrador',
+    motivo_eliminacion: motivo_eliminacion || 'Sin motivo especificado',
+    fecha_eliminacion: new Date(),
+    creado_en_original: rec.creado_en
+  };
+
+  localState.auditoria_eliminaciones.unshift(registroAudit);
+  localState.reconocimientos.splice(idx, 1);
+
+  if (restituir_voto && votante) {
+    votante.ya_voto = false;
+  }
+
+  return registroAudit;
+}
+
+/**
+ * Consulta la bitácora inmutable de eliminaciones para el Administrador
+ */
+async function getHistorialEliminaciones() {
+  if (pgPool) {
+    await pgPool.query(`
+      CREATE TABLE IF NOT EXISTS auditoria_eliminaciones (
+        id SERIAL PRIMARY KEY,
+        id_reconocimiento_original INT,
+        destinatario_nombre VARCHAR(150),
+        destinatario_servicio VARCHAR(100),
+        motivos TEXT,
+        mensaje TEXT,
+        es_anonimo BOOLEAN,
+        id_votante_real VARCHAR(50),
+        nombre_votante_real VARCHAR(150),
+        eliminado_por_id VARCHAR(50),
+        eliminado_por_nombre VARCHAR(150),
+        motivo_eliminacion TEXT,
+        fecha_eliminacion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        creado_en_original TIMESTAMP WITH TIME ZONE
+      )
+    `);
+
+    const res = await pgPool.query('SELECT * FROM auditoria_eliminaciones ORDER BY fecha_eliminacion DESC');
+    return res.rows;
+  }
+
+  return localState.auditoria_eliminaciones;
+}
+
 module.exports = {
   getFuncionarioById,
   getAllFuncionarios,
@@ -490,5 +686,9 @@ module.exports = {
   checkAndApplyWeeklyReset,
   getLastFriday2200,
   getNextFriday2200,
-  getStats
+  getStats,
+  getAuditoriaReconocimientos,
+  deleteReconocimientoConAuditoria,
+  getHistorialEliminaciones
 };
+

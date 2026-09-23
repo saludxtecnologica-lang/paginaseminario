@@ -515,3 +515,235 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   PESTAÑAS DEL PANEL DE ADMINISTRACIÓN
+   ========================================================================== */
+.admin-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #E2E8F0;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.admin-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.35rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #64748B;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-bottom: -2px;
+}
+
+.admin-tab-btn:hover {
+  color: #0F172A;
+  background: rgba(241, 245, 249, 0.6);
+  border-radius: 8px 8px 0 0;
+}
+
+.admin-tab-btn.active {
+  color: #FF6B4A;
+  border-bottom-color: #FF6B4A;
+  background: transparent;
+}
+
+.admin-tab-btn svg {
+  flex-shrink: 0;
+}
+
+.tab-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: #E2E8F0;
+  color: #475569;
+}
+
+.admin-tab-btn.active .tab-badge {
+  background: #FFF0EB;
+  color: #FF6B4A;
+}
+
+.tab-badge-highlight {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* ==========================================================================
+   BARRA DE HERRAMIENTAS & FILTRO POR CARGO
+   ========================================================================== */
+.toolbar-filters-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.filter-cargo-box {
+  min-width: 200px;
+}
+
+.filter-cargo-select {
+  height: 42px;
+  padding: 0 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #334155;
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filter-cargo-select:focus {
+  border-color: #FF6B4A;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.12);
+}
+
+/* ==========================================================================
+   AUDITORÍA & TRAZABILIDAD
+   ========================================================================== */
+.audit-security-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.84rem;
+  color: #1E40AF;
+  line-height: 1.45;
+}
+
+.audit-security-notice svg {
+  color: #3B82F6;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.badge-anon-audit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.badge-real-audit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #F1F5F9;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.audit-motive-pill {
+  display: inline-block;
+  background: #FFF7ED;
+  color: #C2410C;
+  border: 1px solid #FFEDD5;
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin: 0.1rem 0.1rem 0.1rem 0;
+}
+
+.btn-delete-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-delete-rec:hover {
+  background: #FEE2E2;
+  border-color: #F87171;
+  color: #B91C1C;
+}
+
+/* ==========================================================================
+   MODAL DE CONFIRMACIÓN DE ELIMINACIÓN
+   ========================================================================== */
+.modal-card-danger {
+  max-width: 520px;
+  border-top: 4px solid #EF4444;
+}
+
+.modal-danger-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #EF4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.delete-rec-summary {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  font-size: 0.86rem;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.delete-rec-summary strong {
+  color: #0F172A;
+}
+
+.btn-danger-action {
+  background: #EF4444;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-danger-action:hover {
+  background: #DC2626;
+}
+

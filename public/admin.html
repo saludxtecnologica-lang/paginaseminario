@@ -139,15 +139,68 @@
         </div>
       </section>
 
-      <!-- Tabla del Padrón de Funcionarios -->
-      <section class="admin-table-section">
+      <!-- ==================== PESTAÑAS DEL PANEL ==================== -->
+      <div class="admin-tabs-nav" role="tablist">
+        <button class="admin-tab-btn active" id="tabStaffBtn" role="tab" aria-selected="true" aria-controls="sectionStaff">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Padrón de Funcionarios</span>
+          <span class="tab-badge" id="tabStaffBadge">0</span>
+        </button>
+
+        <button class="admin-tab-btn" id="tabAuditBtn" role="tab" aria-selected="false" aria-controls="sectionAudit">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span>Auditoría de Felicitaciones</span>
+          <span class="tab-badge tab-badge-highlight" id="tabAuditBadge">0</span>
+        </button>
+
+        <button class="admin-tab-btn" id="tabLogBtn" role="tab" aria-selected="false" aria-controls="sectionLog">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Bitácora de Eliminaciones</span>
+          <span class="tab-badge" id="tabLogBadge">0</span>
+        </button>
+      </div>
+
+      <!-- ==================== SECCIÓN 1: PADRÓN DE FUNCIONARIOS ==================== -->
+      <section class="admin-table-section admin-tab-content active" id="sectionStaff">
         <div class="table-toolbar">
-          <div class="search-box">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="filterInput" placeholder="Buscar por nombre, ID o servicio..." autocomplete="off">
+          <div class="toolbar-filters-group">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="filterInput" placeholder="Buscar por nombre, ID o servicio..." autocomplete="off">
+            </div>
+
+            <!-- Filtro por Cargo -->
+            <div class="filter-cargo-box">
+              <label for="filterCargo" class="sr-only">Filtrar por cargo</label>
+              <select id="filterCargo" class="form-input form-select filter-cargo-select" title="Filtrar por cargo profesional">
+                <option value="">Todos los cargos</option>
+                <option value="Médico / Médica">Médico / Médica</option>
+                <option value="Enfermero/a">Enfermero / Enfermera</option>
+                <option value="TENS">TENS</option>
+                <option value="Matrón / Matrona">Matrón / Matrona</option>
+                <option value="Kinesiólogo/a">Kinesiólogo/a</option>
+                <option value="Administrativo/a">Administrativo/a</option>
+                <option value="Auxiliar">Auxiliar / Apoyo Clínico</option>
+                <option value="Tecnólogo Médico">Tecnólogo Médico</option>
+                <option value="Terapeuta Ocupacional">Terapeuta Ocupacional</option>
+                <option value="Químico Farmacéutico">Químico Farmacéutico</option>
+                <option value="Fonoaudiólogo/a">Fonoaudiólogo/a</option>
+                <option value="Personal de Salud">Otro Personal de Salud</option>
+              </select>
+            </div>
           </div>
 
           <div class="table-filter-stats">
@@ -171,6 +224,86 @@
             <tbody id="tableBody">
               <tr>
                 <td colspan="7" class="text-center py-4">Cargando padrón hospitalario...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== SECCIÓN 2: AUDITORÍA DE FELICITACIONES ==================== -->
+      <section class="admin-table-section admin-tab-content" id="sectionAudit" style="display: none;">
+        <div class="table-toolbar">
+          <div class="toolbar-filters-group">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="filterAuditInput" placeholder="Buscar por emisor, destinatario o palabras..." autocomplete="off">
+            </div>
+          </div>
+
+          <div class="table-filter-stats">
+            <span id="auditFilteredCount">Cargando auditoría...</span>
+          </div>
+        </div>
+
+        <div class="audit-security-notice">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span><strong>Trazabilidad Confidencial:</strong> Esta vista revela la identidad del votante real de cada felicitación para supervisión institucional, incluso cuando se haya publicado con la opción "Anónimo" en el muro público.</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table" id="auditTable">
+            <thead>
+              <tr>
+                <th>Fecha / ID</th>
+                <th>Emisor Real (Trazabilidad)</th>
+                <th>Destinatario Reconocido</th>
+                <th>Motivos</th>
+                <th>Mensaje / Testimonio</th>
+                <th class="text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody">
+              <tr>
+                <td colspan="6" class="text-center py-4">Cargando auditoría de felicitaciones...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== SECCIÓN 3: BITÁCORA DE ELIMINACIONES ==================== -->
+      <section class="admin-table-section admin-tab-content" id="sectionLog" style="display: none;">
+        <div class="table-toolbar">
+          <div class="table-title-wrap">
+            <h3 style="font-size: 1.1rem; color: #0F172A; font-weight: 700;">Historial Inmutable de Felicitaciones Eliminadas</h3>
+            <p style="font-size: 0.84rem; color: #64748B;">Registro de seguridad con fecha, administrador actuante y motivo justificado.</p>
+          </div>
+          <div class="table-filter-stats">
+            <span id="logFilteredCount">0 registros</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table" id="logTable">
+            <thead>
+              <tr>
+                <th>Fecha Eliminación</th>
+                <th>Destinatario Original</th>
+                <th>Emisor Real</th>
+                <th>Contenido Eliminado</th>
+                <th>Eliminado Por</th>
+                <th>Motivo de Eliminación</th>
+              </tr>
+            </thead>
+            <tbody id="logTableBody">
+              <tr>
+                <td colspan="6" class="text-center py-4">No hay eliminaciones registradas.</td>
               </tr>
             </tbody>
           </table>
@@ -249,6 +382,65 @@
         <div class="modal-actions">
           <button type="button" class="btn btn-outline" id="cancelAddModalBtn">Cancelar</button>
           <button type="submit" class="btn btn-primary" id="saveStaffBtn">Guardar en Padrón</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ELIMINAR FELICITACIÓN (AUDITORÍA) ==================== -->
+  <div class="modal-backdrop" id="deleteRecModal" style="display: none;">
+    <div class="modal-card modal-card-danger">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div class="modal-danger-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h3 class="modal-title">Eliminar Felicitación del Muro</h3>
+        </div>
+        <button class="modal-close-btn" id="closeDeleteRecModalBtn" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">
+        Esta acción retirará la felicitación del muro público y del cómputo de corazones. La acción quedará registrada permanentemente en la bitácora de auditoría.
+      </p>
+
+      <div class="delete-rec-summary" id="deleteRecSummary">
+        <!-- Resumen inyectado dinámicamente -->
+      </div>
+
+      <form id="deleteRecForm" class="modal-form" style="margin-top: 1rem;">
+        <input type="hidden" id="deleteRecId" value="">
+
+        <div class="form-group">
+          <label class="form-label" for="deleteRecReason">
+            Motivo de la Eliminación (Justificación de Auditoría) <span class="required-asterisk">*</span>
+          </label>
+          <select id="deleteRecReasonSelect" class="form-input form-select" style="margin-bottom: 0.5rem;">
+            <option value="Contenido inapropiado o broma">Contenido inapropiado o no compatible con los valores institucionales</option>
+            <option value="Error en funcionario destinatario">Error de selección de compañero/a por parte del emisor</option>
+            <option value="Solicitud directa del funcionario">Solicitud expresa del funcionario emisor o destinatario</option>
+            <option value="Registro duplicado accidental">Registro duplicado accidental</option>
+            <option value="Otro motivo justificado">Otro motivo justificado (especificar abajo)</option>
+          </select>
+          <textarea id="deleteRecReasonDetail" class="form-textarea" rows="2" placeholder="Detalle adicional sobre la razón de retiro..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-simple-label">
+            <input type="checkbox" id="deleteRecRestoreVote" checked>
+            <span><strong>Restituir derecho a voto</strong> del funcionario emisor (para que pueda volver a votar este ciclo)</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="cancelDeleteRecBtn">Cancelar</button>
+          <button type="submit" class="btn btn-danger-action" id="confirmDeleteRecBtn">
+            <span>Confirmar Eliminación y Registrar Auditoría</span>
+          </button>
         </div>
       </form>
     </div>

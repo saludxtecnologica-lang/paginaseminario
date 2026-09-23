@@ -42,6 +42,8 @@ app.all(['/api/auth/me', '/api/me'], require('./api/auth/me'));
 app.all('/api/reconocimientos', require('./api/reconocimientos/index'));
 app.all('/api/admin/stats', require('./api/admin/stats'));
 app.all('/api/admin/funcionarios', require('./api/admin/funcionarios'));
+app.all('/api/admin/reconocimientos', require('./api/admin/reconocimientos'));
+app.all('/api/admin/eliminaciones', require('./api/admin/eliminaciones'));
 app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
 
 app.all('/api/funcionarios', require('./api/funcionarios'));
