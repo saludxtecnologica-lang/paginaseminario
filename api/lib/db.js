@@ -355,6 +355,129 @@ async function getStats() {
   };
 }
 
+/**
+ * Calcula el timestamp del último viernes a las 22:00 hrs
+ */
+function getLastFriday2200(now = new Date()) {
+  const date = new Date(now);
+  const day = date.getDay();
+  const hour = date.getHours();
+  let diffDays = 0;
+  if (day === 5) {
+    diffDays = (hour >= 22) ? 0 : 7;
+  } else if (day === 6) {
+    diffDays = 1;
+  } else {
+    diffDays = day + 2;
+  }
+  const lastFriday = new Date(date);
+  lastFriday.setDate(date.getDate() - diffDays);
+  lastFriday.setHours(22, 0, 0, 0);
+  return lastFriday;
+}
+
+/**
+ * Calcula el timestamp del próximo viernes a las 22:00 hrs
+ */
+function getNextFriday2200(now = new Date()) {
+  const last = getLastFriday2200(now);
+  const next = new Date(last);
+  next.setDate(last.getDate() + 7);
+  return next;
+}
+
+/**
+ * Verifica y ejecuta el reinicio semanal automático de los viernes a las 22:00 hrs
+ */
+async function checkAndApplyWeeklyReset() {
+  const lastFriday = getLastFriday2200();
+
+  if (pgPool) {
+    try {
+      await pgPool.query(`
+        CREATE TABLE IF NOT EXISTS configuracion_sistema (
+          clave VARCHAR(60) PRIMARY KEY,
+          valor TEXT,
+          actualizado_en TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        )
+      `);
+
+      const res = await pgPool.query("SELECT valor FROM configuracion_sistema WHERE clave = 'ultimo_reinicio_semanal'");
+      let ultimoReinicio = null;
+      if (res.rows.length > 0 && res.rows[0].valor) {
+        ultimoReinicio = new Date(res.rows[0].valor);
+      }
+
+      if (!ultimoReinicio || ultimoReinicio < lastFriday) {
+        console.log('🔄 [Reset Semanal] Reiniciando padrón electoral para nuevo ciclo (Viernes 22:00 hrs)...');
+        await resetAllVotos();
+        await pgPool.query(`
+          INSERT INTO configuracion_sistema (clave, valor, actualizado_en)
+          VALUES ('ultimo_reinicio_semanal', $1, NOW())
+          ON CONFLICT (clave) DO UPDATE SET valor = $1, actualizado_en = NOW()
+        `, [new Date().toISOString()]);
+        return { resetApplied: true, fecha: new Date(), proximoReinicio: getNextFriday2200() };
+      }
+      return { resetApplied: false, ultimoReinicio, proximoReinicio: getNextFriday2200() };
+    } catch (err) {
+      console.warn('⚠️ Error al verificar ciclo semanal en PG:', err.message);
+    }
+  }
+
+  // Modo memoria local
+  if (!localState.ultimoReinicioSemanal || localState.ultimoReinicioSemanal < lastFriday) {
+    console.log('🔄 [Reset Semanal Memoria] Reiniciando padrón electoral para nuevo ciclo...');
+    await resetAllVotos();
+    localState.ultimoReinicioSemanal = new Date();
+    return { resetApplied: true, fecha: new Date(), proximoReinicio: getNextFriday2200() };
+  }
+  return { resetApplied: false, ultimoReinicio: localState.ultimoReinicioSemanal, proximoReinicio: getNextFriday2200() };
+}
+
+/**
+ * Obtiene el Top 5 de funcionarios con más felicitaciones y todas sus menciones detalladas
+ */
+async function getTopReconocidos(limit = 5) {
+  const all = await getAllReconocimientos();
+  
+  const map = new Map();
+  for (const r of all) {
+    const key = (r.destinatario_nombre || '').trim();
+    if (!key) continue;
+
+    if (!map.has(key)) {
+      map.set(key, {
+        destinatario_nombre: key,
+        destinatario_servicio: r.destinatario_servicio || '',
+        total_felicitaciones: 0,
+        menciones: []
+      });
+    }
+
+    const item = map.get(key);
+    item.total_felicitaciones++;
+    if (!item.destinatario_servicio && r.destinatario_servicio) {
+      item.destinatario_servicio = r.destinatario_servicio;
+    }
+
+    item.menciones.push({
+      id: r.id,
+      motivos: Array.isArray(r.motivos) ? r.motivos : [r.motivos],
+      mensaje: r.mensaje || '',
+      es_anonimo: Boolean(r.es_anonimo),
+      votante_nombre: r.votante_nombre || (r.es_anonimo ? 'Anónimo' : 'Colega del Hospital'),
+      creado_en: r.creado_en
+    });
+  }
+
+  // Ordenar de mayor a menor por total de felicitaciones (corazones) y limitar a 5 personas
+  const sorted = Array.from(map.values())
+    .sort((a, b) => b.total_felicitaciones - a.total_felicitaciones)
+    .slice(0, limit);
+
+  return sorted;
+}
+
 module.exports = {
   getFuncionarioById,
   getAllFuncionarios,
@@ -362,6 +485,10 @@ module.exports = {
   deleteFuncionario,
   registrarVotoReconocimiento,
   getAllReconocimientos,
+  getTopReconocidos,
   resetAllVotos,
+  checkAndApplyWeeklyReset,
+  getLastFriday2200,
+  getNextFriday2200,
   getStats
 };

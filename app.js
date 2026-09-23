@@ -60,10 +60,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const submitBtn = document.getElementById('submitBtn');
 
   // Muro y Hero
-  const compactFeedList = document.getElementById('compactFeedList');
+  const gratitudeFeed = document.getElementById('gratitudeFeed');
   const wallCountBadge = document.getElementById('wallCountBadge');
+  const cycleResetBadge = document.getElementById('cycleResetBadge');
   const heroCtaBtn = document.getElementById('heroCtaBtn');
   const toastContainer = document.getElementById('toastContainer');
+
+  // Modal de Detalle de Menciones
+  const mentionsModal = document.getElementById('mentionsModal');
+  const closeMentionsModalBtn = document.getElementById('closeMentionsModalBtn');
+  const dismissMentionsBtn = document.getElementById('dismissMentionsBtn');
+  const mentionsProfileAvatar = document.getElementById('mentionsProfileAvatar');
+  const mentionsProfileName = document.getElementById('mentionsProfileName');
+  const mentionsProfileService = document.getElementById('mentionsProfileService');
+  const mentionsHeartNumber = document.getElementById('mentionsHeartNumber');
+  const mentionsItemsList = document.getElementById('mentionsItemsList');
+
 
   // Modal de Autenticación
   const authModal = document.getElementById('authModal');
@@ -324,10 +336,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target === authModal) cerrarModalAuth();
   });
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && authModal && authModal.style.display === 'flex') {
-      cerrarModalAuth();
+    if (e.key === 'Escape') {
+      if (authModal && authModal.style.display === 'flex') {
+        cerrarModalAuth();
+      }
+      if (mentionsModal && mentionsModal.style.display === 'flex') {
+        cerrarModalMenciones();
+      }
     }
   });
+
 
   // Botones de demostración rápida
   document.querySelectorAll('.demo-btn').forEach(btn => {
@@ -729,13 +747,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentUser.ya_voto = true;
         renderAuthenticatedState();
 
-        // Agregar tarjeta al feed en vivo
-        agregarReconocimientoAlMuro(
-          selectedColleague.nombre_completo,
-          reasons,
-          optionalMessage,
-          esAnonimo ? 'Anónimo' : currentUser.nombre_completo
-        );
+        // Actualizar el feed del Muro con el Top 5 recalculado
+        await cargarReconocimientosPublicos();
 
         mostrarToast(
           '¡Reconocimiento Registrado con Éxito!',
@@ -757,85 +770,296 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // =========================================================================
-  // 8. Cargar y Renderizar Reconocimientos en el Muro
+  // 8. Detalle de Menciones (Modal Interactivo)
   // =========================================================================
-  async function cargarReconocimientosPublicos() {
-    try {
-      const res = await fetch('/api/reconocimientos');
-      if (res.ok) {
-        const data = await res.json();
-        const lista = data.reconocimientos || [];
-        if (lista.length > 0) {
-          totalRecognitions = 5 + lista.length;
-          if (wallCountBadge) {
-            wallCountBadge.textContent = `${totalRecognitions} reconocimientos`;
-          }
-          // Renderizar los nuevos provenientes de la base de datos
-          lista.forEach(r => {
-            agregarReconocimientoAlMuro(
-              r.destinatario_nombre,
-              r.motivos,
-              r.mensaje,
-              r.votante_nombre,
-              new Date(r.creado_en)
-            );
-          });
-        }
-      }
-    } catch (e) {
-      console.log('Utilizando feed inicial.');
-    }
-  }
+  function abrirModalMenciones(persona) {
+    if (!persona || !mentionsModal) return;
 
-  function agregarReconocimientoAlMuro(nombre, motivos, mensaje, autor = 'Colega del Hospital', fechaObj = new Date()) {
-    const initials = nombre
+    const initials = (persona.destinatario_nombre || 'RH')
       .split(' ')
       .filter(w => w.length > 0)
       .slice(0, 2)
       .map(w => w[0].toUpperCase())
       .join('') || 'RH';
 
-    const fechaFormateada = new Intl.DateTimeFormat('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(fechaObj);
+    if (mentionsProfileAvatar) mentionsProfileAvatar.textContent = initials;
+    if (mentionsProfileName) mentionsProfileName.textContent = persona.destinatario_nombre;
+    if (mentionsProfileService) mentionsProfileService.textContent = persona.destinatario_servicio || 'Servicio Hospitalario';
+    
+    const totalHearts = persona.total_felicitaciones || (persona.menciones ? persona.menciones.length : 1);
+    if (mentionsHeartNumber) mentionsHeartNumber.textContent = totalHearts;
 
-    const card = document.createElement('article');
-    card.className = 'gratitude-card card-compact card-newly-added';
+    if (mentionsItemsList) {
+      const menciones = persona.menciones || [];
+      if (menciones.length === 0) {
+        mentionsItemsList.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; color: var(--color-text-muted);">
+            No hay menciones detalladas para este ciclo.
+          </div>
+        `;
+      } else {
+        mentionsItemsList.innerHTML = menciones.map((m) => {
+          const motivosArray = Array.isArray(m.motivos) ? m.motivos : [m.motivos || 'Compromiso'];
+          const motivosHtml = motivosArray
+            .map(mot => `<span class="mention-reason-pill">🌟 ${escapeHtml(mot)}</span>`)
+            .join('');
 
-    let extraMessageHtml = '';
-    if (mensaje) {
-      extraMessageHtml = `<p class="recognition-text" style="margin-top: 0.6rem; margin-bottom: 0.5rem; font-size: 0.92rem;">"${escapeHtml(mensaje)}"</p>`;
+          let mensajeHtml = '';
+          if (m.mensaje && m.mensaje.trim()) {
+            mensajeHtml = `<p class="mention-quote">"${escapeHtml(m.mensaje)}"</p>`;
+          }
+
+          let fechaStr = 'Ciclo actual';
+          if (m.creado_en) {
+            try {
+              fechaStr = new Intl.DateTimeFormat('es-ES', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              }).format(new Date(m.creado_en));
+            } catch (err) {}
+          }
+
+          const autor = m.votante_nombre || 'Colega del Hospital';
+
+          return `
+            <div class="mention-item-card">
+              <div class="mention-reasons-wrap">
+                ${motivosHtml}
+              </div>
+              ${mensajeHtml}
+              <div class="mention-footer">
+                <span class="mention-author">Felicitado por: <strong>${escapeHtml(autor)}</strong></span>
+                <span class="mention-date">${fechaStr}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
-    const motivosHtml = (Array.isArray(motivos) ? motivos : [motivos])
-      .map(m => `<span class="reason-tag">🌟 ${escapeHtml(m)}</span>`)
-      .join('');
+    mentionsModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 
-    card.innerHTML = `
-      <div class="card-body">
-        <div class="compact-header">
-          <div class="avatar-sm avatar-new">${escapeHtml(initials)}</div>
-          <div>
-            <h4 class="compact-name">${escapeHtml(nombre)}</h4>
-            <div class="compact-reason">
-              ${motivosHtml}
-            </div>
-          </div>
-        </div>
-        ${extraMessageHtml}
-        <div class="compact-footer" style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.76rem; color: #64748B;">Reconocido por: <strong>${escapeHtml(autor)}</strong></span>
-          <span class="compact-date">${fechaFormateada}</span>
-        </div>
-      </div>
-    `;
-
-    if (compactFeedList) {
-      compactFeedList.insertBefore(card, compactFeedList.firstChild);
+  function cerrarModalMenciones() {
+    if (mentionsModal) {
+      mentionsModal.style.display = 'none';
+      document.body.style.overflow = '';
     }
   }
+
+  if (closeMentionsModalBtn) closeMentionsModalBtn.addEventListener('click', cerrarModalMenciones);
+  if (dismissMentionsBtn) dismissMentionsBtn.addEventListener('click', cerrarModalMenciones);
+  if (mentionsModal) {
+    mentionsModal.addEventListener('click', (e) => {
+      if (e.target === mentionsModal) cerrarModalMenciones();
+    });
+  }
+
+  // =========================================================================
+  // 9. Cargar y Renderizar Reconocimientos en el Muro (Top 5 con Corazones)
+  // =========================================================================
+  async function cargarReconocimientosPublicos() {
+    if (!gratitudeFeed) return;
+    try {
+      const res = await fetch('/api/reconocimientos');
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const top5 = data.top_reconocidos || [];
+      const totalReconocimientos = (data.reconocimientos && data.reconocimientos.length) || 0;
+
+      if (wallCountBadge) {
+        wallCountBadge.textContent = `${totalReconocimientos} reconocimiento${totalReconocimientos === 1 ? '' : 's'}`;
+      }
+
+      if (data.ciclo && data.ciclo.proximo_reinicio && cycleResetBadge) {
+        try {
+          const fechaProx = new Date(data.ciclo.proximo_reinicio);
+          const strProx = new Intl.DateTimeFormat('es-ES', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            hour: '2-digit',
+            minute: '2-digit'
+          }).format(fechaProx);
+          cycleResetBadge.setAttribute('title', `Próximo reinicio semanal: ${strProx}. Se restablecerá el voto para todo el personal.`);
+        } catch (e) {}
+      }
+
+      if (top5.length === 0) {
+        gratitudeFeed.innerHTML = `
+          <div class="wall-empty-state">
+            <div class="wall-empty-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <h3 style="font-family: var(--font-serif); font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--color-text-main);">Comienza el Ciclo de Reconocimiento</h3>
+            <p style="font-size: 0.9rem; max-width: 360px; margin: 0 auto 1.2rem auto;">
+              Aún no hay votos registrados en este ciclo semanal. ¡Sé el primero en felicitar a un compañero de equipo!
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      // Renderizar el Top 5 con diseño jerárquico
+      let htmlCards = '';
+      top5.forEach((p, index) => {
+        const initials = (p.destinatario_nombre || 'RH')
+          .split(' ')
+          .filter(w => w.length > 0)
+          .slice(0, 2)
+          .map(w => w[0].toUpperCase())
+          .join('') || 'RH';
+
+        const felicitacionesCount = p.total_felicitaciones || 1;
+        const labelFelicitaciones = felicitacionesCount === 1 ? '1 felicitación' : `${felicitacionesCount} felicitaciones`;
+
+        // Extraer los motivos únicos recibidos
+        const todosLosMotivos = [];
+        if (p.menciones) {
+          p.menciones.forEach(m => {
+            const arr = Array.isArray(m.motivos) ? m.motivos : [m.motivos];
+            arr.forEach(mot => {
+              if (mot && !todosLosMotivos.includes(mot)) todosLosMotivos.push(mot);
+            });
+          });
+        }
+        const motivosPreview = todosLosMotivos.slice(0, 3);
+        const motivosHtml = motivosPreview
+          .map(m => `<span class="reason-tag">🌟 ${escapeHtml(m)}</span>`)
+          .join('');
+
+        // Último mensaje con texto para previsualizar
+        const ultimaMencionConTexto = p.menciones ? p.menciones.find(m => m.mensaje && m.mensaje.trim()) : null;
+        const mensajePreview = ultimaMencionConTexto ? ultimaMencionConTexto.mensaje : '';
+
+        if (index === 0) {
+          // Tarjeta Destacada (#1 del Top)
+          htmlCards += `
+            <article class="gratitude-card card-featured card-clickable" data-person-index="${index}" tabindex="0" role="button" aria-label="Ver todas las menciones recibidas por ${escapeHtml(p.destinatario_nombre)}">
+              <div class="card-body">
+                <div class="rank-ribbon">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span>🏆 Top 1 Más Reconocido/a de la Semana</span>
+                </div>
+
+                <div class="featured-profile">
+                  <div class="avatar avatar-featured">${escapeHtml(initials)}</div>
+                  <div>
+                    <h3 class="featured-name">${escapeHtml(p.destinatario_nombre)}</h3>
+                    <p class="featured-role">${escapeHtml(p.destinatario_servicio || 'Servicio Hospitalario')}</p>
+                  </div>
+                </div>
+
+                <div class="featured-motives-row" style="margin-top: 0.65rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                  ${motivosHtml}
+                </div>
+
+                ${mensajePreview ? `
+                  <blockquote class="featured-quote" style="margin-top: 0.85rem;">
+                    "${escapeHtml(mensajePreview)}"
+                  </blockquote>
+                ` : ''}
+
+                <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.1rem; padding-top: 0.85rem; border-top: 1px solid var(--color-border-subtle);">
+                  <div class="heart-counter-badge" title="Total de felicitaciones acumuladas">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span>${labelFelicitaciones}</span>
+                  </div>
+
+                  <span class="card-action-hint">
+                    <span>Ver todas las menciones (${p.menciones?.length || 1})</span>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </article>
+          `;
+        } else {
+          // Tarjetas Compactas (#2 a #5)
+          const rankClass = index === 1 ? 'rank-2' : (index === 2 ? 'rank-3' : '');
+          htmlCards += `
+            <article class="gratitude-card card-compact card-clickable" data-person-index="${index}" tabindex="0" role="button" aria-label="Ver todas las menciones recibidas por ${escapeHtml(p.destinatario_nombre)}">
+              <div class="card-body">
+                <div class="compact-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="rank-pill ${rankClass}">#${index + 1}</div>
+                    <div class="avatar-sm">${escapeHtml(initials)}</div>
+                    <div>
+                      <h4 class="compact-name">${escapeHtml(p.destinatario_nombre)}</h4>
+                      <span style="font-size: 0.78rem; color: var(--color-text-muted);">${escapeHtml(p.destinatario_servicio || 'Servicio Hospitalario')}</span>
+                    </div>
+                  </div>
+
+                  <div class="heart-counter-badge" title="Total de felicitaciones acumuladas">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span>${felicitacionesCount}</span>
+                  </div>
+                </div>
+
+                <div class="compact-reason" style="margin-top: 0.55rem;">
+                  ${motivosHtml}
+                </div>
+
+                ${mensajePreview ? `
+                  <p class="recognition-text" style="margin-top: 0.5rem; margin-bottom: 0.4rem; font-size: 0.88rem; font-style: italic; color: #475569;">
+                    "${escapeHtml(mensajePreview)}"
+                  </p>
+                ` : ''}
+
+                <div class="compact-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.65rem; padding-top: 0.45rem; border-top: 1px dashed #F1F5F9;">
+                  <span style="font-size: 0.76rem; color: var(--color-text-light);">
+                    ${p.menciones?.length || 1} menci${(p.menciones?.length || 1) === 1 ? 'ón' : 'ones'}
+                  </span>
+                  <span class="card-action-hint">
+                    <span>Ver detalles</span>
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+      });
+
+      gratitudeFeed.innerHTML = htmlCards;
+
+      // Eventos para abrir el modal al clickear en la tarjeta de cualquier persona
+      gratitudeFeed.querySelectorAll('.card-clickable').forEach(card => {
+        const personIdx = parseInt(card.getAttribute('data-person-index'), 10);
+        const persona = top5[personIdx];
+
+        card.addEventListener('click', () => {
+          abrirModalMenciones(persona);
+        });
+
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            abrirModalMenciones(persona);
+          }
+        });
+      });
+
+    } catch (e) {
+      console.warn('Error cargando el Top 5 de reconocimientos:', e);
+    }
+  }
+
 
   // =========================================================================
   // 9. Reacciones y Micro-interacciones

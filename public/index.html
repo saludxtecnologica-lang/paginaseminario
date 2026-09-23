@@ -153,150 +153,33 @@
       <div class="container">
         <div class="workspace-grid">
 
-          <!-- COLUMNA IZQUIERDA: MURO DE GRATITUD -->
+          <!-- COLUMNA IZQUIERDA: MURO DE GRATITUD (TOP 5 DE PERSONAS MÁS RECONOCIDAS) -->
           <div class="wall-column" id="muro-seccion">
             <div class="section-heading-row">
               <div>
                 <h2 class="section-title">Muro de Gratitud</h2>
-                <p class="section-desc">Historias y agradecimientos compartidos en tiempo real por el equipo de salud.
-                </p>
+                <p class="section-desc">Top 5 de personas más reconocidas del equipo en el ciclo actual. Haz clic en cualquiera para ver sus menciones.</p>
               </div>
-              <div class="live-indicator">
-                <span class="live-pulse"></span>
-                <span id="wallCountBadge">5 reconocimientos</span>
+              <div class="wall-meta-badges">
+                <span class="cycle-reset-badge" id="cycleResetBadge" title="Ciclo semanal de reconocimiento">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span>Reinicio: Viernes 22:00 hrs</span>
+                </span>
+                <div class="live-indicator">
+                  <span class="live-pulse"></span>
+                  <span id="wallCountBadge">0 reconocimientos</span>
+                </div>
               </div>
             </div>
 
+            <!-- CONTENEDOR DINÁMICO DEL MURO (MÁXIMO 5 PERSONAS CON CONTADOR DE CORAZONES) -->
             <div class="feed-container" id="gratitudeFeed">
-
-              <!-- TARJETA DESTACADA: MARÍA GONZÁLEZ -->
-              <article class="gratitude-card card-featured" id="featuredCard">
-                <div class="featured-ribbon">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  Reconocimiento Destacado
-                </div>
-                <div class="card-body">
-                  <div class="author-row">
-                    <div class="avatar-circle avatar-maria">MG</div>
-                    <div class="author-meta">
-                      <h3 class="author-name">María González</h3>
-                      <span class="author-role">Enfermera Jefa • Unidad de Cuidados Intensivos</span>
-                    </div>
-                  </div>
-
-                  <div class="reason-badge featured-badge">
-                    <span class="trophy-icon">🏆</span>
-                    <strong>Motivo: Liderazgo y Trabajo en equipo</strong>
-                  </div>
-
-                  <p class="recognition-text">
-                    "Queremos destacar su serenidad, apoyo constante al equipo durante el turno de noche y su infinita
-                    paciencia para guiar a los nuevos residentes con una sonrisa cálida. ¡Gracias por hacernos sentir
-                    siempre respaldados!"
-                  </p>
-
-                  <div class="card-footer">
-                    <div class="card-date">
-                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                      </svg>
-                      <time datetime="2026-04-15">15 de abril, 2026</time>
-                    </div>
-                    <div class="heart-reaction-btn" title="Dar apoyo" data-reactions="24">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path
-                          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                      </svg>
-                      <span class="reaction-count">24</span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-
-              <!-- FEED DE TARJETAS MÁS PEQUEÑAS (SOLO NOMBRE Y MOTIVO) -->
-              <div class="compact-cards-list" id="compactFeedList">
-
-                <article class="gratitude-card card-compact">
-                  <div class="card-body">
-                    <div class="compact-header">
-                      <div class="avatar-sm avatar-jp">JP</div>
-                      <div>
-                        <h4 class="compact-name">Juan Pérez</h4>
-                        <div class="compact-reason">
-                          <span class="reason-tag">🤝 Disposición y ayuda</span>
-                          <span class="reason-tag">✨ Paciencia</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="compact-footer">
-                      <span class="compact-date">18 de abril, 2026</span>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="gratitude-card card-compact">
-                  <div class="card-body">
-                    <div class="compact-header">
-                      <div class="avatar-sm avatar-ar">AR</div>
-                      <div>
-                        <h4 class="compact-name">Ana Rodríguez</h4>
-                        <div class="compact-reason">
-                          <span class="reason-tag">💡 Innovación en el trabajo</span>
-                          <span class="reason-tag">❤️ Empatía con el equipo</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="compact-footer">
-                      <span class="compact-date">17 de abril, 2026</span>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="gratitude-card card-compact">
-                  <div class="card-body">
-                    <div class="compact-header">
-                      <div class="avatar-sm avatar-cs">CS</div>
-                      <div>
-                        <h4 class="compact-name">Dr. Carlos Silva</h4>
-                        <div class="compact-reason">
-                          <span class="reason-tag">🎯 Resolución de problemas</span>
-                          <span class="reason-tag">💬 Comunicación efectiva</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="compact-footer">
-                      <span class="compact-date">16 de abril, 2026</span>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="gratitude-card card-compact">
-                  <div class="card-body">
-                    <div class="compact-header">
-                      <div class="avatar-sm avatar-lm">LM</div>
-                      <div>
-                        <h4 class="compact-name">Lucía Méndez</h4>
-                        <div class="compact-reason">
-                          <span class="reason-tag">🛡️ Cuidado y bienestar con el equipo</span>
-                          <span class="reason-tag">🌟 Compromiso con el trabajo</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="compact-footer">
-                      <span class="compact-date">15 de abril, 2026</span>
-                    </div>
-                  </div>
-                </article>
-
+              <div class="wall-loading-placeholder" id="wallLoadingPlaceholder" style="padding: 2.5rem 1rem; text-align: center; color: var(--color-text-muted);">
+                <span style="font-size: 0.95rem;">Cargando el Top 5 de personas reconocidas...</span>
               </div>
-
             </div>
           </div>
 
@@ -777,6 +660,52 @@
             <span class="demo-badge">PIN: 1234</span>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE DETALLE DE MENCIONES (TOP 5) ==================== -->
+  <div class="modal-backdrop" id="mentionsModal" style="display: none;">
+    <div class="modal-card mentions-modal-card">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="auth-modal-kicker-badge" style="background: rgba(239, 68, 68, 0.1); color: #EF4444;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            Muro de Agradecimientos
+          </span>
+          <h3 class="modal-title" id="mentionsModalTitle">Menciones Recibidas</h3>
+        </div>
+        <button class="modal-close-btn" id="closeMentionsModalBtn" aria-label="Cerrar ventana">&times;</button>
+      </div>
+
+      <!-- Ficha del funcionario consultado -->
+      <div class="mentions-colleague-profile">
+        <div class="mentions-profile-avatar" id="mentionsProfileAvatar">--</div>
+        <div class="mentions-profile-info">
+          <strong class="mentions-profile-name" id="mentionsProfileName">Funcionario</strong>
+          <span class="mentions-profile-service" id="mentionsProfileService">Servicio Hospitalario</span>
+        </div>
+        <div class="mentions-profile-count" title="Total de felicitaciones recibidas en este ciclo">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span id="mentionsHeartNumber">0</span>
+        </div>
+      </div>
+
+      <div class="mentions-cycle-hint">
+        <span>Ciclo de votación activo • El sistema se reinicia todos los viernes a las 22:00 hrs</span>
+      </div>
+
+      <!-- Lista con scroll de todas las menciones detalladas -->
+      <div class="mentions-items-list" id="mentionsItemsList">
+        <!-- Renderizado dinámicamente -->
+      </div>
+
+      <div class="modal-footer-action">
+        <button type="button" class="btn btn-outline-nav btn-close-mentions" id="dismissMentionsBtn">Cerrar</button>
       </div>
     </div>
   </div>

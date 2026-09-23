@@ -46,6 +46,17 @@ app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
 
 app.all('/api/funcionarios', require('./api/funcionarios'));
 app.all('/api/health', require('./api/health'));
+app.all('/api/cron/reset-cycle', require('./api/cron/reset-cycle'));
+
+// Verificación periódica local del ciclo semanal (Viernes 22:00 hrs)
+setInterval(async () => {
+  try {
+    const { checkAndApplyWeeklyReset } = require('./api/lib/db');
+    await checkAndApplyWeeklyReset();
+  } catch (err) {
+    // Modo silencioso en fondo
+  }
+}, 60000);
 
 // ==============================================================================
 // 2. SERVICIO DE ARCHIVOS ESTÁTICOS (PUBLIC & ROOT)

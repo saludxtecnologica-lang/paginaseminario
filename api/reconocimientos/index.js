@@ -1,4 +1,11 @@
-const { getAllFuncionarios, getAllReconocimientos, registrarVotoReconocimiento } = require('../lib/db');
+const {
+  getAllFuncionarios,
+  getAllReconocimientos,
+  getTopReconocidos,
+  registrarVotoReconocimiento,
+  checkAndApplyWeeklyReset,
+  getNextFriday2200
+} = require('../lib/db');
 const { requireAuth, parseBody, sendJson, sendError } = require('../lib/middleware');
 
 module.exports = async function handler(req, res) {
@@ -13,11 +20,22 @@ module.exports = async function handler(req, res) {
     return res.end();
   }
 
-  // GET: Obtener feed de reconocimientos
+  // GET: Obtener reconocimientos y Top 5 de personas más reconocidas
   if (req.method === 'GET') {
     try {
+      await checkAndApplyWeeklyReset();
       const lista = await getAllReconocimientos();
-      return sendJson(res, 200, { reconocimientos: lista });
+      const topReconocidos = await getTopReconocidos(5);
+      const proximoReinicio = getNextFriday2200();
+
+      return sendJson(res, 200, {
+        reconocimientos: lista,
+        top_reconocidos: topReconocidos,
+        ciclo: {
+          regla: 'Se reinicia todos los viernes a las 22:00 hrs',
+          proximo_reinicio: proximoReinicio
+        }
+      });
     } catch (err) {
       console.error('Error al listar reconocimientos:', err);
       return sendError(res, 500, 'Error al obtener la lista de reconocimientos.');

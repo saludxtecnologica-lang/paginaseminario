@@ -2185,5 +2185,354 @@ body {
   color: #94A3B8;
 }
 
+/* ==========================================================================
+   MURO DE GRATITUD - TOP 5 & DETALLE DE MENCIONES
+   ========================================================================== */
+
+/* Badges del encabezado del Muro */
+.wall-meta-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cycle-reset-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background: #FFF7ED;
+  color: #C2410C;
+  border: 1px solid #FFEDD5;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: -0.01em;
+}
+
+.cycle-reset-badge svg {
+  color: #EA580C;
+  flex-shrink: 0;
+}
+
+/* Tarjetas interactivas del Muro (Top 5) */
+.card-clickable {
+  cursor: pointer;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(33, 37, 41, 0.10);
+  border-color: #FED7AA;
+}
+
+.card-clickable:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Indicador de medalla / ranking */
+.rank-ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  color: #92400E;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.rank-pill {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #CBD5E1;
+  flex-shrink: 0;
+}
+
+.rank-pill.rank-2 {
+  background: #E2E8F0;
+  color: #334155;
+  border-color: #94A3B8;
+}
+
+.rank-pill.rank-3 {
+  background: #FFEDD5;
+  color: #9A3412;
+  border-color: #FDBA74;
+}
+
+/* Botón / Indicador de Corazones (conteo real de felicitaciones) */
+.heart-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.8rem;
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FEE2E2;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.card-clickable:hover .heart-counter-badge {
+  transform: scale(1.05);
+  background: #FEE2E2;
+}
+
+.heart-counter-badge svg {
+  color: #EF4444;
+  flex-shrink: 0;
+}
+
+.card-action-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  opacity: 0.85;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.card-clickable:hover .card-action-hint {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* Empty State del Muro */
+.wall-empty-state {
+  background: #FFFFFF;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.wall-empty-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   MODAL DE DETALLE DE MENCIONES
+   ========================================================================== */
+.mentions-modal-card {
+  max-width: 580px;
+  width: 92%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mentions-colleague-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%);
+  border: 1.5px solid #FFEDD5;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.85rem;
+}
+
+.mentions-profile-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #E04E2D);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 107, 74, 0.25);
+}
+
+.mentions-profile-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.mentions-profile-name {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.mentions-profile-service {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+
+.mentions-profile-count {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  background: #FEF2F2;
+  border: 1.5px solid #FECACA;
+  border-radius: var(--radius-full);
+  color: #DC2626;
+  font-weight: 800;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.mentions-profile-count svg {
+  color: #EF4444;
+  animation: pulse-heart 2s infinite ease-in-out;
+}
+
+@keyframes pulse-heart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
+.mentions-cycle-hint {
+  font-size: 0.77rem;
+  color: var(--color-text-light);
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Lista de menciones con scroll */
+.mentions-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow-y: auto;
+  max-height: 48vh;
+  padding-right: 0.35rem;
+  margin-bottom: 1.2rem;
+}
+
+.mentions-items-list::-webkit-scrollbar {
+  width: 6px;
+}
+.mentions-items-list::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+.mention-item-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.mention-item-card:hover {
+  border-color: #E2E8F0;
+  box-shadow: 0 4px 12px rgba(33, 37, 41, 0.05);
+}
+
+.mention-reasons-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.mention-reason-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.mention-quote {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--color-text-main);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--color-primary-border);
+}
+
+.mention-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  border-top: 1px dashed #F1F5F9;
+  padding-top: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.mention-author {
+  font-weight: 600;
+  color: #334155;
+}
+
+.mention-date {
+  color: var(--color-text-light);
+  font-size: 0.74rem;
+}
+
+.modal-footer-action {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 0.9rem;
+}
+
+.btn-close-mentions {
+  padding: 0.55rem 1.4rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+
 
 
