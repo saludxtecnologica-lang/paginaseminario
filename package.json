@@ -2,7 +2,6 @@
   "name": "reconocimiento-hospitalario",
   "version": "1.0.0",
   "description": "Plataforma de bienestar y reconocimiento hospitalario con control de 1 funcionario = 1 voto",
-  "main": "app.cjs",
   "scripts": {
     "dev": "node app.cjs",
     "start": "node app.cjs",

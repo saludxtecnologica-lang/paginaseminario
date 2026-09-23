@@ -44,16 +44,7 @@ app.all('/api/admin/stats', require('./api/admin/stats'));
 app.all('/api/admin/funcionarios', require('./api/admin/funcionarios'));
 app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
 
-// Endpoint de diagnóstico rápido de Supabase
-app.get('/api/health', async (req, res) => {
-  const { getStats } = require('./api/lib/db');
-  try {
-    const stats = await getStats();
-    res.json({ status: 'ok', database: 'connected', stats });
-  } catch (err) {
-    res.status(500).json({ status: 'error', message: err.message });
-  }
-});
+app.all('/api/health', require('./api/health'));
 
 // ==============================================================================
 // 2. SERVICIO DE ARCHIVOS ESTÁTICOS (PUBLIC & ROOT)
