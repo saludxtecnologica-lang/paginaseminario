@@ -1,4 +1,4 @@
-const { getAllReconocimientos, registrarVotoReconocimiento } = require('../lib/db');
+const { getAllFuncionarios, getAllReconocimientos, registrarVotoReconocimiento } = require('../lib/db');
 const { requireAuth, parseBody, sendJson, sendError } = require('../lib/middleware');
 
 module.exports = async function handler(req, res) {
@@ -43,7 +43,24 @@ module.exports = async function handler(req, res) {
       const { destinatario_nombre, destinatario_servicio, motivos, mensaje, es_anonimo } = body;
 
       if (!destinatario_nombre || !String(destinatario_nombre).trim()) {
-        return sendError(res, 400, 'Debe indicar el nombre y apellido del compañero a reconocer.');
+        return sendError(res, 400, 'Debe indicar el nombre del compañero a reconocer.');
+      }
+
+      // Validar que el destinatario esté registrado en la plantilla del hospital
+      const funcionarios = await getAllFuncionarios();
+      const cleanDestinatario = String(destinatario_nombre).trim().toLowerCase();
+      const funcionarioValido = funcionarios.find(f => 
+        f.nombre_completo.toLowerCase() === cleanDestinatario ||
+        f.id_empleado.toLowerCase() === cleanDestinatario
+      );
+
+      if (!funcionarioValido) {
+        return sendError(res, 400, 'El compañero seleccionado no figura en la plantilla oficial de funcionarios.');
+      }
+
+      // Evitar auto-reconocimiento
+      if (funcionarioValido.id_empleado.toLowerCase() === String(user.id_empleado).toLowerCase()) {
+        return sendError(res, 400, 'No es posible emitir un auto-reconocimiento a uno mismo. Por favor elija a un colega.');
       }
 
       if (!motivos || !Array.isArray(motivos) || motivos.length === 0) {
@@ -53,8 +70,8 @@ module.exports = async function handler(req, res) {
       // Registrar voto y actualizar ya_voto de manera atómica
       const nuevoReconocimiento = await registrarVotoReconocimiento({
         id_votante: user.id_empleado,
-        destinatario_nombre: String(destinatario_nombre).trim(),
-        destinatario_servicio: String(destinatario_servicio || '').trim(),
+        destinatario_nombre: funcionarioValido.nombre_completo,
+        destinatario_servicio: funcionarioValido.servicio || String(destinatario_servicio || '').trim(),
         motivos,
         mensaje: String(mensaje || '').trim(),
         es_anonimo: Boolean(es_anonimo)

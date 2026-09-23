@@ -34,7 +34,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const formCardContainer = document.querySelector('.form-auth-container') || document.querySelector('.form-card-container');
   const recognitionForm = document.getElementById('recognitionForm');
+  
+  // Elementos del Selector / Buscador de Funcionarios (Padrón Oficial)
+  const colleagueCombobox = document.getElementById('colleagueCombobox');
+  const colleagueSearchInput = document.getElementById('colleagueSearchInput');
+  const colleagueDropdownList = document.getElementById('colleagueDropdownList');
+  const clearColleagueBtn = document.getElementById('clearColleagueBtn');
+  const toggleColleagueDropdownBtn = document.getElementById('toggleColleagueDropdownBtn');
+  const selectedColleagueChip = document.getElementById('selectedColleagueChip');
+  const chipAvatar = document.getElementById('chipAvatar');
+  const chipName = document.getElementById('chipName');
+  const chipService = document.getElementById('chipService');
   const colleagueNameInput = document.getElementById('colleagueName');
+  const colleagueServiceInput = document.getElementById('colleagueService');
+  const colleagueIdInput = document.getElementById('colleagueId');
+
+  let funcionariosRoster = [];
+  let selectedColleague = null;
+
   const nameError = document.getElementById('nameError');
   const reasonsError = document.getElementById('reasonsError');
   const checkboxItems = document.querySelectorAll('.custom-checkbox-item');
@@ -449,13 +466,191 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  if (colleagueNameInput) {
-    colleagueNameInput.addEventListener('input', () => {
-      if (colleagueNameInput.value.trim().length > 0) {
-        nameError.classList.remove('visible');
+  // =========================================================================
+  // 6b. Lógica del Buscador / Selector de Funcionarios (Padrón Oficial)
+  // =========================================================================
+  async function cargarFuncionariosRoster() {
+    try {
+      const res = await fetch('/api/funcionarios');
+      if (res.ok) {
+        const data = await res.json();
+        funcionariosRoster = data.funcionarios || [];
+      }
+    } catch (e) {
+      console.warn('No se pudo cargar el padrón de funcionarios:', e.message);
+    }
+  }
+
+  function getEligibleFuncionarios(query = '') {
+    const cleanQuery = query.trim().toLowerCase();
+    return funcionariosRoster.filter(f => {
+      // Excluir al usuario actualmente autenticado (no permitirse auto-felicitarse)
+      if (currentUser && f.id_empleado && f.id_empleado.toLowerCase() === String(currentUser.id_empleado).toLowerCase()) {
+        return false;
+      }
+      if (!cleanQuery) return true;
+      return (
+        (f.nombre_completo && f.nombre_completo.toLowerCase().includes(cleanQuery)) ||
+        (f.servicio && f.servicio.toLowerCase().includes(cleanQuery)) ||
+        (f.cargo && f.cargo.toLowerCase().includes(cleanQuery))
+      );
+    });
+  }
+
+  function renderColleagueDropdown(query = '') {
+    if (!colleagueDropdownList) return;
+    const matches = getEligibleFuncionarios(query);
+
+    if (matches.length === 0) {
+      colleagueDropdownList.innerHTML = `
+        <div class="colleague-dropdown-empty">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>No figura ningún funcionario con "${escapeHtml(query)}" en la plantilla registrada.</span>
+        </div>
+      `;
+      colleagueDropdownList.style.display = 'block';
+      return;
+    }
+
+    colleagueDropdownList.innerHTML = matches.map(f => {
+      const initials = (f.nombre_completo || 'U')
+        .split(' ')
+        .filter(w => w.length > 0)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join('') || 'U';
+
+      const isSelected = selectedColleague && selectedColleague.id_empleado === f.id_empleado;
+
+      return `
+        <div class="colleague-dropdown-item ${isSelected ? 'selected' : ''}" 
+             data-id="${escapeHtml(f.id_empleado)}"
+             data-nombre="${escapeHtml(f.nombre_completo)}"
+             data-servicio="${escapeHtml(f.servicio || '')}">
+          <div class="item-avatar">${initials}</div>
+          <div class="item-info">
+            <strong class="item-name">${escapeHtml(f.nombre_completo)}</strong>
+            <span class="item-service">${escapeHtml(f.servicio || 'Servicio Hospitalario')}</span>
+          </div>
+          <span class="item-badge">${escapeHtml(f.cargo || 'Funcionario')}</span>
+        </div>
+      `;
+    }).join('');
+
+    colleagueDropdownList.style.display = 'block';
+
+    // Manejador de selección de cada item
+    colleagueDropdownList.querySelectorAll('.colleague-dropdown-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const fId = item.getAttribute('data-id');
+        const found = funcionariosRoster.find(f => f.id_empleado === fId);
+        seleccionarFuncionario(found || {
+          id_empleado: fId,
+          nombre_completo: item.getAttribute('data-nombre'),
+          servicio: item.getAttribute('data-servicio')
+        });
+      });
+    });
+  }
+
+  function seleccionarFuncionario(func) {
+    if (!func) return;
+    selectedColleague = func;
+
+    if (colleagueNameInput) colleagueNameInput.value = func.nombre_completo;
+    if (colleagueServiceInput) colleagueServiceInput.value = func.servicio || '';
+    if (colleagueIdInput) colleagueIdInput.value = func.id_empleado;
+    if (colleagueSearchInput) colleagueSearchInput.value = func.nombre_completo;
+
+    if (selectedColleagueChip) {
+      const initials = (func.nombre_completo || 'U')
+        .split(' ')
+        .filter(w => w.length > 0)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join('') || 'U';
+
+      if (chipAvatar) chipAvatar.textContent = initials;
+      if (chipName) chipName.textContent = func.nombre_completo;
+      if (chipService) chipService.textContent = `${func.servicio || 'Servicio Hospitalario'} • ${func.cargo || 'Personal Hospitalario'}`;
+      selectedColleagueChip.style.display = 'flex';
+    }
+
+    if (clearColleagueBtn) clearColleagueBtn.style.display = 'flex';
+    if (nameError) nameError.classList.remove('visible');
+    cerrarDropdownColleague();
+  }
+
+  function limpiarSeleccionFuncionario() {
+    selectedColleague = null;
+    if (colleagueNameInput) colleagueNameInput.value = '';
+    if (colleagueServiceInput) colleagueServiceInput.value = '';
+    if (colleagueIdInput) colleagueIdInput.value = '';
+    if (colleagueSearchInput) {
+      colleagueSearchInput.value = '';
+      colleagueSearchInput.focus();
+    }
+    if (selectedColleagueChip) selectedColleagueChip.style.display = 'none';
+    if (clearColleagueBtn) clearColleagueBtn.style.display = 'none';
+    renderColleagueDropdown('');
+  }
+
+  function cerrarDropdownColleague() {
+    if (colleagueDropdownList) colleagueDropdownList.style.display = 'none';
+    if (toggleColleagueDropdownBtn) toggleColleagueDropdownBtn.classList.remove('open');
+  }
+
+  // Eventos del combobox de búsqueda
+  if (colleagueSearchInput) {
+    colleagueSearchInput.addEventListener('focus', () => {
+      renderColleagueDropdown(colleagueSearchInput.value);
+      if (toggleColleagueDropdownBtn) toggleColleagueDropdownBtn.classList.add('open');
+    });
+
+    colleagueSearchInput.addEventListener('input', () => {
+      if (selectedColleague && colleagueSearchInput.value.trim() !== selectedColleague.nombre_completo) {
+        selectedColleague = null;
+        if (colleagueNameInput) colleagueNameInput.value = '';
+        if (colleagueServiceInput) colleagueServiceInput.value = '';
+        if (colleagueIdInput) colleagueIdInput.value = '';
+        if (selectedColleagueChip) selectedColleagueChip.style.display = 'none';
+        if (clearColleagueBtn) clearColleagueBtn.style.display = 'none';
+      }
+      renderColleagueDropdown(colleagueSearchInput.value);
+    });
+  }
+
+  if (toggleColleagueDropdownBtn) {
+    toggleColleagueDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = colleagueDropdownList && colleagueDropdownList.style.display === 'block';
+      if (isOpen) {
+        cerrarDropdownColleague();
+      } else {
+        if (colleagueSearchInput) colleagueSearchInput.focus();
+        renderColleagueDropdown(colleagueSearchInput ? colleagueSearchInput.value : '');
+        toggleColleagueDropdownBtn.classList.add('open');
       }
     });
   }
+
+  if (clearColleagueBtn) {
+    clearColleagueBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      limpiarSeleccionFuncionario();
+    });
+  }
+
+  // Cerrar lista al hacer clic fuera del combobox
+  document.addEventListener('click', (e) => {
+    if (colleagueCombobox && !colleagueCombobox.contains(e.target)) {
+      cerrarDropdownColleague();
+    }
+  });
 
   // =========================================================================
   // 7. Envío de Reconocimiento Protegido (1 Funcionario = 1 Voto)
@@ -477,11 +672,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      const nameVal = colleagueNameInput.value.trim();
+      // Validar que se haya seleccionado un funcionario registrado
+      const nameVal = colleagueNameInput ? colleagueNameInput.value.trim() : '';
       const selectedCheckboxes = document.querySelectorAll('input[name="reasons"]:checked');
       let isValid = true;
 
-      if (!nameVal) {
+      if (!selectedColleague || !nameVal) {
+        nameError.textContent = 'Por favor, selecciona a un funcionario registrado en la plantilla del hospital.';
         nameError.classList.add('visible');
         isValid = false;
       } else {
@@ -511,8 +708,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           method: 'POST',
           headers: getAuthHeaders(),
           body: JSON.stringify({
-            destinatario_nombre: nameVal,
-            destinatario_servicio: '',
+            destinatario_nombre: selectedColleague.nombre_completo,
+            destinatario_servicio: selectedColleague.servicio || '',
             motivos: reasons,
             mensaje: optionalMessage,
             es_anonimo: esAnonimo
@@ -534,7 +731,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Agregar tarjeta al feed en vivo
         agregarReconocimientoAlMuro(
-          nameVal,
+          selectedColleague.nombre_completo,
           reasons,
           optionalMessage,
           esAnonimo ? 'Anónimo' : currentUser.nombre_completo
@@ -542,11 +739,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         mostrarToast(
           '¡Reconocimiento Registrado con Éxito!',
-          `Tu voto hacia ${nameVal} ha sido contabilizado en este ciclo.`
+          `Tu felicitación hacia ${selectedColleague.nombre_completo} ha sido registrada oficialmente.`
         );
 
-        // Resetear formulario
+        // Resetear formulario y selector
         recognitionForm.reset();
+        limpiarSeleccionFuncionario();
         checkboxItems.forEach(i => i.classList.remove('checked'));
 
       } catch (err) {
@@ -713,5 +911,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 10. Inicialización
   // =========================================================================
   await checkSession();
+  await cargarFuncionariosRoster();
   await cargarReconocimientosPublicos();
 });

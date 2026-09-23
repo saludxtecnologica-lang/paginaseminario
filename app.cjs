@@ -44,6 +44,7 @@ app.all('/api/admin/stats', require('./api/admin/stats'));
 app.all('/api/admin/funcionarios', require('./api/admin/funcionarios'));
 app.all('/api/admin/reset-votos', require('./api/admin/reset-votos'));
 
+app.all('/api/funcionarios', require('./api/funcionarios'));
 app.all('/api/health', require('./api/health'));
 
 // ==============================================================================

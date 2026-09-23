@@ -369,21 +369,55 @@
               </div>
 
               <form id="recognitionForm" class="recognition-form" novalidate>
-                <!-- Campo de Nombre y Apellido -->
-                <div class="form-group">
-                  <label for="colleagueName" class="form-label">
-                    Nombre y apellido de quien quieres reconocer <span class="required-asterisk">*</span>
+                <!-- Selector / Buscador de Funcionarios Registrados en Padrón -->
+                <div class="form-group colleague-selector-group">
+                  <label for="colleagueSearchInput" class="form-label">
+                    Funcionario a reconocer (Padrón Oficial) <span class="required-asterisk">*</span>
                   </label>
-                  <div class="input-wrapper">
-                    <input type="text" id="colleagueName" name="colleagueName" class="form-input"
-                      placeholder="Ingrese nombre y apellido" required autocomplete="off">
-                    <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                  <div class="colleague-combobox" id="colleagueCombobox">
+                    <div class="input-wrapper has-combobox-controls">
+                      <input type="text" id="colleagueSearchInput" class="form-input colleague-search-input"
+                        placeholder="Escribe el nombre, apellido o servicio..." required autocomplete="off"
+                        aria-autocomplete="list" aria-expanded="false" aria-controls="colleagueDropdownList">
+                      <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                      <button type="button" class="btn-clear-combobox" id="clearColleagueBtn" style="display: none;" title="Cambiar funcionario seleccionado" aria-label="Limpiar selección">&times;</button>
+                      <button type="button" class="btn-toggle-combobox" id="toggleColleagueDropdownBtn" title="Ver lista de funcionarios registrados" aria-label="Desplegar funcionarios">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Ficha destacada del funcionario seleccionado -->
+                    <div class="selected-colleague-chip" id="selectedColleagueChip" style="display: none;">
+                      <div class="chip-avatar" id="chipAvatar">--</div>
+                      <div class="chip-details">
+                        <strong class="chip-name" id="chipName">Nombre del Funcionario</strong>
+                        <span class="chip-service" id="chipService">Servicio Hospitalario</span>
+                      </div>
+                      <span class="chip-check-badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Registrado
+                      </span>
+                    </div>
+
+                    <!-- Menú Desplegable Flotante de Búsqueda -->
+                    <div class="colleague-dropdown-list" id="colleagueDropdownList" role="listbox" style="display: none;">
+                      <!-- Se renderizan los funcionarios aquí -->
+                    </div>
                   </div>
-                  <span class="field-error-msg" id="nameError">Por favor, ingrese el nombre del compañero.</span>
+
+                  <!-- Campos de valor real (compatibilidad y validación) -->
+                  <input type="hidden" id="colleagueName" name="colleagueName" value="">
+                  <input type="hidden" id="colleagueService" name="colleagueService" value="">
+                  <input type="hidden" id="colleagueId" name="colleagueId" value="">
+                  <span class="field-error-msg" id="nameError">Por favor, seleccione a un compañero de la lista de funcionarios registrados.</span>
                 </div>
 
                 <!-- Lista de Casillas de Verificación (Checkboxes) -->
