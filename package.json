@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node app.cjs",
     "start": "node app.cjs",
-    "test": "node test_flow.js"
+    "test": "node test_flow.js",
+    "db:setup": "node db/migrate.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.0",
