@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Reconocimiento Hospitalario - Plataforma de bienestar y aprecio entre profesionales de la salud. Honra a tus compañeros de equipo y fortalece la cultura laboral.">
+  <title>Reconocimiento Hospitalario | Honra a tus compañeros de equipo</title>
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- ==================== HEADER / NAVBAR ==================== -->
+  <header class="site-header" id="header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand-logo" aria-label="Reconocimiento Hospitalario">
+        <span class="heart-icon-wrapper">
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+        </span>
+        <span class="brand-name">Reconocimiento Hosp.</span>
+      </a>
+
+      <nav class="nav-actions" aria-label="Navegación principal">
+        <a href="#inicio" class="nav-link active">Inicio</a>
+
+        <!-- Botón de Acceso por ID y PIN (Invitado) -->
+        <button class="btn btn-outline-nav" id="loginTriggerBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Iniciar Sesión</span>
+        </button>
+
+        <!-- Elemento de usuario autenticado (Menú dinámico) -->
+        <div class="user-menu-wrapper" id="userMenuWrapper" style="display: none;">
+          <button class="user-avatar-btn" id="userMenuBtn" aria-label="Menú de usuario" title="Perfil de usuario">
+            <span class="avatar-letter" id="userAvatarLetter">U</span>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="user-dropdown-header">
+              <div class="avatar-sm" id="dropdownAvatarLetter">U</div>
+              <div>
+                <strong id="dropdownUserName">Usuario</strong>
+                <small id="dropdownUserRole">Personal de Salud</small>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            
+            <!-- Enlace exclusivo para Administradores -->
+            <a href="/admin.html" class="dropdown-item admin-link-item" id="adminPanelLink" style="display: none;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              <span>👑 Panel Administrador</span>
+            </a>
+
+            <a href="#formulario-seccion" class="dropdown-item">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Emitir Reconocimiento
+            </a>
+
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item dropdown-logout-btn" id="logoutBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="hero-section" id="inicio">
+      <div class="hero-bg-container">
+        <img src="assets/hero-hospital.jpg" alt="Pasillo de hospital moderno con luz natural" class="hero-bg-image">
+        <div class="hero-overlay"></div>
+      </div>
+
+      <div class="container hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Cultura de Aprecio & Bienestar Hospitalario</span>
+        </div>
+
+        <h1 class="hero-title">Honra a tus compañeros de equipo</h1>
+        <p class="hero-subtitle">Crea hoy una cultura de aprecio y gratitud en tus compañeros de trabajo.</p>
+
+        <div class="hero-cta-wrapper">
+          <a href="#formulario-seccion" class="btn btn-primary btn-cta" id="heroCtaBtn">
+            <span>Enviar Reconocimiento</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CINTA DE MARQUESINA ==================== -->
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-item">Gratitud • Empatía • Reconocimiento • Gratitud • Empatía • Reconocimiento • Gratitud
+          • Empatía • Reconocimiento • Gratitud • Empatía • Reconocimiento •&nbsp;</span>
+        <span class="marquee-item">Gratitud • Empatía • Reconocimiento • Gratitud • Empatía • Reconocimiento • Gratitud
+          • Empatía • Reconocimiento • Gratitud • Empatía • Reconocimiento •&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- ==================== CONTENIDO PRINCIPAL: MURO & FORMULARIO ==================== -->
+    <section class="main-content-section" id="seccion-interactiva">
+      <div class="container">
+        <div class="workspace-grid">
+
+          <!-- COLUMNA IZQUIERDA: MURO DE GRATITUD -->
+          <div class="wall-column" id="muro-seccion">
+            <div class="section-heading-row">
+              <div>
+                <h2 class="section-title">Muro de Gratitud</h2>
+                <p class="section-desc">Historias y agradecimientos compartidos en tiempo real por el equipo de salud.
+                </p>
+              </div>
+              <div class="live-indicator">
+                <span class="live-pulse"></span>
+                <span id="wallCountBadge">5 reconocimientos</span>
+              </div>
+            </div>
+
+            <div class="feed-container" id="gratitudeFeed">
+
+              <!-- TARJETA DESTACADA: MARÍA GONZÁLEZ -->
+              <article class="gratitude-card card-featured" id="featuredCard">
+                <div class="featured-ribbon">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                  Reconocimiento Destacado
+                </div>
+                <div class="card-body">
+                  <div class="author-row">
+                    <div class="avatar-circle avatar-maria">MG</div>
+                    <div class="author-meta">
+                      <h3 class="author-name">María González</h3>
+                      <span class="author-role">Enfermera Jefa • Unidad de Cuidados Intensivos</span>
+                    </div>
+                  </div>
+
+                  <div class="reason-badge featured-badge">
+                    <span class="trophy-icon">🏆</span>
+                    <strong>Motivo: Liderazgo y Trabajo en equipo</strong>
+                  </div>
+
+                  <p class="recognition-text">
+                    "Queremos destacar su serenidad, apoyo constante al equipo durante el turno de noche y su infinita
+                    paciencia para guiar a los nuevos residentes con una sonrisa cálida. ¡Gracias por hacernos sentir
+                    siempre respaldados!"
+                  </p>
+
+                  <div class="card-footer">
+                    <div class="card-date">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                      <time datetime="2026-04-15">15 de abril, 2026</time>
+                    </div>
+                    <div class="heart-reaction-btn" title="Dar apoyo" data-reactions="24">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path
+                          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                      </svg>
+                      <span class="reaction-count">24</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- FEED DE TARJETAS MÁS PEQUEÑAS (SOLO NOMBRE Y MOTIVO) -->
+              <div class="compact-cards-list" id="compactFeedList">
+
+                <article class="gratitude-card card-compact">
+                  <div class="card-body">
+                    <div class="compact-header">
+                      <div class="avatar-sm avatar-jp">JP</div>
+                      <div>
+                        <h4 class="compact-name">Juan Pérez</h4>
+                        <div class="compact-reason">
+                          <span class="reason-tag">🤝 Disposición y ayuda</span>
+                          <span class="reason-tag">✨ Paciencia</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="compact-footer">
+                      <span class="compact-date">18 de abril, 2026</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="gratitude-card card-compact">
+                  <div class="card-body">
+                    <div class="compact-header">
+                      <div class="avatar-sm avatar-ar">AR</div>
+                      <div>
+                        <h4 class="compact-name">Ana Rodríguez</h4>
+                        <div class="compact-reason">
+                          <span class="reason-tag">💡 Innovación en el trabajo</span>
+                          <span class="reason-tag">❤️ Empatía con el equipo</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="compact-footer">
+                      <span class="compact-date">17 de abril, 2026</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="gratitude-card card-compact">
+                  <div class="card-body">
+                    <div class="compact-header">
+                      <div class="avatar-sm avatar-cs">CS</div>
+                      <div>
+                        <h4 class="compact-name">Dr. Carlos Silva</h4>
+                        <div class="compact-reason">
+                          <span class="reason-tag">🎯 Resolución de problemas</span>
+                          <span class="reason-tag">💬 Comunicación efectiva</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="compact-footer">
+                      <span class="compact-date">16 de abril, 2026</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="gratitude-card card-compact">
+                  <div class="card-body">
+                    <div class="compact-header">
+                      <div class="avatar-sm avatar-lm">LM</div>
+                      <div>
+                        <h4 class="compact-name">Lucía Méndez</h4>
+                        <div class="compact-reason">
+                          <span class="reason-tag">🛡️ Cuidado y bienestar con el equipo</span>
+                          <span class="reason-tag">🌟 Compromiso con el trabajo</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="compact-footer">
+                      <span class="compact-date">15 de abril, 2026</span>
+                    </div>
+                  </div>
+                </article>
+
+              </div>
+
+            </div>
+          </div>
+
+          <!-- COLUMNA DERECHA: TARJETA CONTENEDORA DEL FORMULARIO -->
+          <div class="form-column" id="formulario-seccion">
+
+            <!-- TARJETA PARA INVITADOS (El Muro es público, el formulario requiere login) -->
+            <div class="form-card-container form-guest-card" id="formGuestCard">
+              <div class="guest-card-icon-badge">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+
+              <span class="form-kicker">Acceso Exclusivo para Personal de Salud</span>
+              <h3 class="form-title">¿Deseas reconocer a un compañero de equipo?</h3>
+              <p class="guest-card-desc">
+                El <strong>Muro de Gratitud</strong> es público y visible para toda la comunidad. Sin embargo, para emitir un reconocimiento oficial debes identificarte con tu <strong>ID (RUT o Ficha)</strong> y <strong>PIN</strong>.
+              </p>
+
+              <div class="guest-card-features">
+                <div class="feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>Control estricto de <strong>1 voto por funcionario</strong></span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>Opción de publicar con tu nombre o como <strong>anónimo</strong></span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-check">✓</span>
+                  <span><strong>Sin correo electrónico</strong> ni pasos innecesarios</span>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary btn-guest-action" id="guestLoginActionBtn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+                <span>Identificarme para Reconocer</span>
+              </button>
+
+              <span class="guest-card-footnote">Solo toma 10 segundos. Si no tienes PIN, consulta en Dirección.</span>
+            </div>
+
+            <!-- CONTENEDOR DEL FORMULARIO (Solo accesible tras loguearse) -->
+            <div class="form-card-container form-auth-container" id="formAuthContainer" style="display: none;">
+              <div class="form-header">
+                <span class="form-kicker">Tu reconocimiento cuenta</span>
+                <h3 class="form-title">Reconoce a un compañero de trabajo con este formulario.</h3>
+                <p class="form-subtitle">Selecciona las cualidades que hacen brillar su labor en el hospital.</p>
+              </div>
+
+              <!-- Banner de Estado de Votación (1 Funcionario = 1 Voto) -->
+              <div class="voter-status-banner" id="voterStatusBanner">
+                <div class="voter-status-icon" id="voterStatusIcon">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div class="voter-status-content">
+                  <strong id="voterStatusTitle">Estado de Voto</strong>
+                  <p id="voterStatusDesc">Cargando estado...</p>
+                </div>
+              </div>
+
+              <form id="recognitionForm" class="recognition-form" novalidate>
+                <!-- Campo de Nombre y Apellido -->
+                <div class="form-group">
+                  <label for="colleagueName" class="form-label">
+                    Nombre y apellido de quien quieres reconocer <span class="required-asterisk">*</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <input type="text" id="colleagueName" name="colleagueName" class="form-input"
+                      placeholder="Ingrese nombre y apellido" required autocomplete="off">
+                    <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                      stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <span class="field-error-msg" id="nameError">Por favor, ingrese el nombre del compañero.</span>
+                </div>
+
+                <!-- Lista de Casillas de Verificación (Checkboxes) -->
+                <div class="form-group">
+                  <span class="form-label">Motivos de reconocimiento <span class="required-asterisk">*</span></span>
+                  <p class="checkbox-instruction">Selecciona al menos un motivo:</p>
+
+                  <div class="checkbox-grid" id="checkboxGroup">
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Trabajo en quipo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Trabajo en quipo</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Disposición y ayuda">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Disposición y ayuda</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Paciencia">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Paciencia</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Empatía con el equipo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Empatía con el equipo</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Cuidado y bienestar con el equipo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Cuidado y bienestar con el equipo</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Comunicación efectiva">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Comunicación efectiva</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Resolución de problemas">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Resolución de problemas</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Innovación en el trabajo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Innovación en el trabajo</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Liderazgo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Liderazgo</span>
+                    </label>
+
+                    <label class="custom-checkbox-item">
+                      <input type="checkbox" name="reasons" value="Compromiso con el trabajo">
+                      <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                          stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span class="checkbox-label-text">Compromiso con el trabajo</span>
+                    </label>
+
+                  </div>
+                  <span class="field-error-msg" id="reasonsError">Por favor, seleccione al menos una opción.</span>
+                </div>
+
+                <!-- Mensaje opcional de aprecio -->
+                <div class="form-group">
+                  <label for="optionalMessage" class="form-label">Palabras de agradecimiento <span
+                      class="label-optional">(Opcional)</span></label>
+                  <textarea id="optionalMessage" name="optionalMessage" class="form-textarea" rows="3"
+                    placeholder="Escribe unas palabras motivadoras o anécdota de apoyo..."></textarea>
+                </div>
+
+                <!-- Opción Anónimo -->
+                <div class="form-group">
+                  <label class="checkbox-simple-label">
+                    <input type="checkbox" id="isAnonymous" name="isAnonymous">
+                    <span>Mantener mi nombre en reserva (Publicar como "Anónimo" en el muro)</span>
+                  </label>
+                </div>
+
+                <!-- Botón de Envío Naranja -->
+                <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                  <span>[Enviar]</span>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </form>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECCIÓN DE IMPACTO (ESTADÍSTICAS) ==================== -->
+    <section class="impact-section" id="estadisticas">
+      <div class="container">
+        <div class="impact-header">
+          <h2 class="impact-title">El poder del reconocimiento en la salud</h2>
+          <p class="impact-subtitle">Resultados tangibles que fortalecen la vocación y el compromiso en cada turno.</p>
+        </div>
+
+        <div class="stats-grid">
+          <!-- Estadística 1 -->
+          <div class="stat-card">
+            <div class="stat-number-wrapper">
+              <span class="stat-number" data-target="150">150+</span>
+            </div>
+            <h3 class="stat-label">Hospitales y centros médicos</h3>
+            <p class="stat-description">Instituciones de salud que han transformado su cultura de cuidado y aprecio
+              mutuo.</p>
+          </div>
+
+          <!-- Estadística 2 -->
+          <div class="stat-card stat-card-highlight">
+            <div class="stat-number-wrapper">
+              <span class="stat-number" data-target="98">98%</span>
+            </div>
+            <h3 class="stat-label">Mejora en el clima laboral</h3>
+            <p class="stat-description">Profesionales que afirman sentirse más valorados, motivados y respaldados por
+              sus pares.</p>
+          </div>
+
+          <!-- Estadística 3 -->
+          <div class="stat-card">
+            <div class="stat-number-wrapper">
+              <span class="stat-number" data-target="12">12k+</span>
+            </div>
+            <h3 class="stat-label">Agradecimientos enviados</h3>
+            <p class="stat-description">Gestos de gratitud compartidos entre médicos, enfermeros, técnicos y personal de
+              apoyo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== PIE DE PÁGINA (FOOTER) ==================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Columna 1: Marca y Propósito -->
+        <div class="footer-brand-col">
+          <a href="#inicio" class="brand-logo footer-logo">
+            <span class="heart-icon-wrapper">
+              <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </span>
+            <span class="brand-name">Reconocimiento Hosp.</span>
+          </a>
+          <p class="footer-tagline">
+            Promoviendo la gratitud, el respeto y la empatía en el ecosistema de la salud. Cada acto de cuidado merece
+            ser reconocido.
+          </p>
+        </div>
+
+        <!-- Columna 2: Contacto -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Contacto Institucional</h4>
+          <ul class="footer-contact-list">
+            <li>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <a href="mailto:info@reconocimientohospitalario.es">info@reconocimientohospitalario.es</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                </path>
+              </svg>
+              <a href="tel:+34912345678">+34 912 345 678</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Edificio de Servicios Clínicos, Madrid / Santiago</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Redes Sociales -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Síguenos</h4>
+          <p class="footer-social-desc">Conéctate con nuestra comunidad de profesionales de la salud:</p>
+          <div class="social-links">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-btn"
+              aria-label="Twitter / X">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn"
+              aria-label="Facebook">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-btn"
+              aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn"
+              aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Legal / Copyright -->
+      <div class="footer-bottom">
+        <p>© 2026 Reconocimiento Hospitalario. Todos los derechos reservados.</p>
+        <div class="footer-legal-links">
+          <a href="#">Privacidad</a>
+          <span>•</span>
+          <a href="#">Términos de Uso</a>
+          <span>•</span>
+          <a href="#">Código de Convivencia Hospitalaria</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL DE AUTENTICACIÓN (LOGIN FLOTANTE) ==================== -->
+  <div class="modal-backdrop" id="authModal" style="display: none;">
+    <div class="modal-card auth-modal-card">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="auth-modal-kicker-badge">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Acceso Institucional
+          </span>
+          <h3 class="modal-title">Iniciar Sesión</h3>
+        </div>
+        <button class="modal-close-btn" id="closeAuthModalBtn" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <p class="auth-modal-desc">
+        Ingresa con tu usuario y contraseña institucional para participar en el ciclo de reconocimiento.
+      </p>
+
+      <div class="auth-error-alert" id="authErrorAlert" style="display: none;"></div>
+
+      <form id="loginForm" class="modal-form">
+        <div class="form-group">
+          <label class="form-label" for="loginIdEmpleado">
+            Usuario o ID de Empleado (RUT / Ficha) <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input type="text" id="loginIdEmpleado" class="form-input" placeholder="Ej: 11111111-1 o admin" required autocomplete="username">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginPin">
+            Contraseña o PIN Institucional <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-wrapper has-toggle">
+            <input type="password" id="loginPin" class="form-input" placeholder="Ingresa tu contraseña o PIN" required autocomplete="current-password">
+            <svg class="input-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <button type="button" class="password-toggle-btn" id="togglePasswordBtn" aria-label="Mostrar u ocultar contraseña">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-submit btn-modal-submit" id="loginSubmitBtn">
+          <span>Ingresar a la Plataforma</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Accesos Rápidos de Demostración para Pruebas -->
+      <div class="demo-accounts-box">
+        <div class="demo-box-title">
+          <span>Cuentas de prueba rápida</span>
+          <span style="font-weight: 500; font-size: 0.72rem; color: var(--color-primary); text-transform: none;">Acceso en 1 clic</span>
+        </div>
+        <div class="demo-buttons-row">
+          <button type="button" class="demo-btn" data-id="admin" data-pin="1234" title="Ingresar como Administradora">
+            <span>👑 Admin (Dra. Natalia)</span>
+            <span class="demo-badge">PIN: 1234</span>
+          </button>
+          <button type="button" class="demo-btn" data-id="11111111-1" data-pin="1234" title="Ingresar como Dr. Andrés (Puede votar)">
+            <span>🩺 Dr. Andrés (Habilitado para votar)</span>
+            <span class="demo-badge">PIN: 1234</span>
+          </button>
+          <button type="button" class="demo-btn" data-id="44444444-4" data-pin="1234" title="Ingresar como Matr. Camila (Ya votó)">
+            <span>✓ Matr. Camila (Ya votó)</span>
+            <span class="demo-badge">PIN: 1234</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
