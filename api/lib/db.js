@@ -311,30 +311,80 @@ async function getAllReconocimientos() {
   });
 }
 
-/**
- * Devuelve solo los reconocimientos emitidos dentro del ciclo semanal actual
- * (desde el último viernes 22:00 hrs en adelante). El reinicio semanal solo
- * limpia la bandera 'ya_voto', por lo que el muro público debe filtrar por
- * fecha para que los reconocimientos de ciclos anteriores dejen de mostrarse.
- */
-async function getReconocimientosCicloActual() {
-  const lastFriday = getLastFriday2200();
-  const all = await getAllReconocimientos();
-  return all.filter(r => new Date(r.creado_en) >= lastFriday);
+async function ensureConfigTable() {
+  if (!pgPool) return;
+  await pgPool.query(`
+    CREATE TABLE IF NOT EXISTS configuracion_sistema (
+      clave VARCHAR(60) PRIMARY KEY,
+      valor TEXT,
+      actualizado_en TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `);
 }
 
 /**
- * Reinicia el estado 'ya_voto = false' para todos los funcionarios (nuevo ciclo)
+ * Devuelve el inicio del ciclo de reconocimientos vigente: el momento del
+ * último reinicio real (ya sea el cron de los viernes 22:00 o un reinicio
+ * manual desde el panel de administración). Mientras no se haya ejecutado
+ * ningún reinicio se usa como referencia el último viernes 22:00 calculado
+ * por calendario.
+ */
+async function getInicioCicloActual() {
+  if (pgPool) {
+    await ensureConfigTable();
+    const res = await pgPool.query("SELECT valor FROM configuracion_sistema WHERE clave = 'ultimo_reinicio_semanal'");
+    if (res.rows.length > 0 && res.rows[0].valor) {
+      return new Date(res.rows[0].valor);
+    }
+    return getLastFriday2200();
+  }
+
+  return localState.ultimoReinicioSemanal || getLastFriday2200();
+}
+
+async function setInicioCicloActual(fecha) {
+  if (pgPool) {
+    await ensureConfigTable();
+    await pgPool.query(`
+      INSERT INTO configuracion_sistema (clave, valor, actualizado_en)
+      VALUES ('ultimo_reinicio_semanal', $1, NOW())
+      ON CONFLICT (clave) DO UPDATE SET valor = $1, actualizado_en = NOW()
+    `, [fecha.toISOString()]);
+    return;
+  }
+
+  localState.ultimoReinicioSemanal = fecha;
+}
+
+/**
+ * Devuelve solo los reconocimientos emitidos dentro del ciclo actual, es
+ * decir, desde el último reinicio real (cron semanal o reinicio manual del
+ * administrador) en adelante. Así, al reiniciar el ciclo el muro público
+ * queda vacío de inmediato en lugar de esperar al próximo corte calendario.
+ */
+async function getReconocimientosCicloActual() {
+  const inicioCiclo = await getInicioCicloActual();
+  const all = await getAllReconocimientos();
+  return all.filter(r => new Date(r.creado_en) >= inicioCiclo);
+}
+
+/**
+ * Reinicia el estado 'ya_voto = false' para todos los funcionarios y marca
+ * el inicio de un nuevo ciclo (usado tanto por el cron semanal como por el
+ * reinicio manual del administrador). Esto hace que el muro público de
+ * reconocimientos quede vacío inmediatamente, en vez de seguir mostrando
+ * los reconocimientos del ciclo anterior hasta el próximo corte calendario.
  */
 async function resetAllVotos() {
   if (pgPool) {
     await pgPool.query('UPDATE funcionarios SET ya_voto = FALSE, actualizado_en = NOW()');
-    return true;
+  } else {
+    localState.funcionarios.forEach(f => {
+      f.ya_voto = false;
+    });
   }
 
-  localState.funcionarios.forEach(f => {
-    f.ya_voto = false;
-  });
+  await setInicioCicloActual(new Date());
   return true;
 }
 
@@ -405,46 +455,19 @@ function getNextFriday2200(now = new Date()) {
 async function checkAndApplyWeeklyReset() {
   const lastFriday = getLastFriday2200();
 
-  if (pgPool) {
-    try {
-      await pgPool.query(`
-        CREATE TABLE IF NOT EXISTS configuracion_sistema (
-          clave VARCHAR(60) PRIMARY KEY,
-          valor TEXT,
-          actualizado_en TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-        )
-      `);
+  try {
+    const ultimoReinicio = await getInicioCicloActual();
 
-      const res = await pgPool.query("SELECT valor FROM configuracion_sistema WHERE clave = 'ultimo_reinicio_semanal'");
-      let ultimoReinicio = null;
-      if (res.rows.length > 0 && res.rows[0].valor) {
-        ultimoReinicio = new Date(res.rows[0].valor);
-      }
-
-      if (!ultimoReinicio || ultimoReinicio < lastFriday) {
-        console.log('🔄 [Reset Semanal] Reiniciando padrón electoral para nuevo ciclo (Viernes 22:00 hrs)...');
-        await resetAllVotos();
-        await pgPool.query(`
-          INSERT INTO configuracion_sistema (clave, valor, actualizado_en)
-          VALUES ('ultimo_reinicio_semanal', $1, NOW())
-          ON CONFLICT (clave) DO UPDATE SET valor = $1, actualizado_en = NOW()
-        `, [new Date().toISOString()]);
-        return { resetApplied: true, fecha: new Date(), proximoReinicio: getNextFriday2200() };
-      }
-      return { resetApplied: false, ultimoReinicio, proximoReinicio: getNextFriday2200() };
-    } catch (err) {
-      console.warn('⚠️ Error al verificar ciclo semanal en PG:', err.message);
+    if (ultimoReinicio < lastFriday) {
+      console.log('🔄 [Reset Semanal] Reiniciando padrón electoral para nuevo ciclo (Viernes 22:00 hrs)...');
+      await resetAllVotos();
+      return { resetApplied: true, fecha: new Date(), proximoReinicio: getNextFriday2200() };
     }
+    return { resetApplied: false, ultimoReinicio, proximoReinicio: getNextFriday2200() };
+  } catch (err) {
+    console.warn('⚠️ Error al verificar ciclo semanal:', err.message);
+    return { resetApplied: false, ultimoReinicio: null, proximoReinicio: getNextFriday2200() };
   }
-
-  // Modo memoria local
-  if (!localState.ultimoReinicioSemanal || localState.ultimoReinicioSemanal < lastFriday) {
-    console.log('🔄 [Reset Semanal Memoria] Reiniciando padrón electoral para nuevo ciclo...');
-    await resetAllVotos();
-    localState.ultimoReinicioSemanal = new Date();
-    return { resetApplied: true, fecha: new Date(), proximoReinicio: getNextFriday2200() };
-  }
-  return { resetApplied: false, ultimoReinicio: localState.ultimoReinicioSemanal, proximoReinicio: getNextFriday2200() };
 }
 
 /**

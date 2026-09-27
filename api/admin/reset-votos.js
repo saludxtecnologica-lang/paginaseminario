@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
   try {
     await resetAllVotos();
     return sendJson(res, 200, {
-      mensaje: 'Ciclo de votación reiniciado exitosamente. Todos los funcionarios pueden volver a emitir su reconocimiento.'
+      mensaje: 'Ciclo de votación reiniciado exitosamente. El muro público quedó vacío y todos los funcionarios pueden volver a emitir su reconocimiento.'
     });
   } catch (err) {
     console.error('Error reiniciando votos:', err);

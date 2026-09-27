@@ -701,9 +701,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // =========================================================================
   if (btnResetCycle) {
     btnResetCycle.addEventListener('click', async () => {
-      const confirmMsg = 
-        "⚠️ ATENCIÓN: Esta acción reiniciará el estado de voto de TODOS los funcionarios (ya_voto = false) para comenzar un nuevo ciclo de reconocimientos.\n\n¿Deseas continuar?";
-      
+      const confirmMsg =
+        "⚠️ ATENCIÓN: Esta acción reiniciará el estado de voto de TODOS los funcionarios (ya_voto = false) y vaciará de inmediato el muro público de reconocimientos para comenzar un nuevo ciclo.\n\n¿Deseas continuar?";
+
       if (!confirm(confirmMsg)) return;
 
       try {
@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           return;
         }
 
-        showAdminToast('Ciclo Reiniciado', 'Todos los funcionarios pueden emitir un nuevo voto.');
+        showAdminToast('Ciclo Reiniciado', 'El muro se vació y todos los funcionarios pueden emitir un nuevo voto.');
         await loadDashboardData();
       } catch (err) {
         console.error('Error reiniciando ciclo:', err);
