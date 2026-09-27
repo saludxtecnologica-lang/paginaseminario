@@ -312,6 +312,18 @@ async function getAllReconocimientos() {
 }
 
 /**
+ * Devuelve solo los reconocimientos emitidos dentro del ciclo semanal actual
+ * (desde el último viernes 22:00 hrs en adelante). El reinicio semanal solo
+ * limpia la bandera 'ya_voto', por lo que el muro público debe filtrar por
+ * fecha para que los reconocimientos de ciclos anteriores dejen de mostrarse.
+ */
+async function getReconocimientosCicloActual() {
+  const lastFriday = getLastFriday2200();
+  const all = await getAllReconocimientos();
+  return all.filter(r => new Date(r.creado_en) >= lastFriday);
+}
+
+/**
  * Reinicia el estado 'ya_voto = false' para todos los funcionarios (nuevo ciclo)
  */
 async function resetAllVotos() {
@@ -439,8 +451,8 @@ async function checkAndApplyWeeklyReset() {
  * Obtiene el Top 5 de funcionarios con más felicitaciones y todas sus menciones detalladas
  */
 async function getTopReconocidos(limit = 5) {
-  const all = await getAllReconocimientos();
-  
+  const all = await getReconocimientosCicloActual();
+
   const map = new Map();
   for (const r of all) {
     const key = (r.destinatario_nombre || '').trim();
@@ -681,6 +693,7 @@ module.exports = {
   deleteFuncionario,
   registrarVotoReconocimiento,
   getAllReconocimientos,
+  getReconocimientosCicloActual,
   getTopReconocidos,
   resetAllVotos,
   checkAndApplyWeeklyReset,

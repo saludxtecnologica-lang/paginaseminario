@@ -1,6 +1,6 @@
 const {
   getAllFuncionarios,
-  getAllReconocimientos,
+  getReconocimientosCicloActual,
   getTopReconocidos,
   registrarVotoReconocimiento,
   checkAndApplyWeeklyReset,
@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       await checkAndApplyWeeklyReset();
-      const lista = await getAllReconocimientos();
+      const lista = await getReconocimientosCicloActual();
       const topReconocidos = await getTopReconocidos(5);
       const proximoReinicio = getNextFriday2200();
 
