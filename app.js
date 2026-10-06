@@ -76,6 +76,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const mentionsHeartNumber = document.getElementById('mentionsHeartNumber');
   const mentionsItemsList = document.getElementById('mentionsItemsList');
 
+  // Modal Legal (Términos de Uso y Política de Privacidad)
+  const legalModal = document.getElementById('legalModal');
+  const closeLegalModalBtn = document.getElementById('closeLegalModalBtn');
+  const dismissLegalBtn = document.getElementById('dismissLegalBtn');
+  const footerPrivacyLink = document.getElementById('footerPrivacyLink');
+  const footerTermsLink = document.getElementById('footerTermsLink');
+  const footerCodeLink = document.getElementById('footerCodeLink');
+  const tabTermsBtn = document.getElementById('tabTermsBtn');
+  const tabPrivacyBtn = document.getElementById('tabPrivacyBtn');
+  const legalTermsPane = document.getElementById('legalTermsPane');
+  const legalPrivacyPane = document.getElementById('legalPrivacyPane');
+  const legalModalTitle = document.getElementById('legalModalTitle');
+  const legalModalBadgeText = document.getElementById('legalModalBadgeText');
+  const legalModalBody = document.getElementById('legalModalBody');
 
   // Modal de Autenticación
   const authModal = document.getElementById('authModal');
@@ -334,6 +348,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Cerrar al presionar fuera o Escape
   window.addEventListener('click', (e) => {
     if (e.target === authModal) cerrarModalAuth();
+    if (e.target === mentionsModal) cerrarModalMenciones();
+    if (e.target === legalModal) cerrarModalLegal();
   });
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -342,6 +358,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       if (mentionsModal && mentionsModal.style.display === 'flex') {
         cerrarModalMenciones();
+      }
+      if (legalModal && legalModal.style.display === 'flex') {
+        cerrarModalLegal();
       }
     }
   });
@@ -845,6 +864,106 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (mentionsModal) {
     mentionsModal.addEventListener('click', (e) => {
       if (e.target === mentionsModal) cerrarModalMenciones();
+    });
+  }
+
+  // =========================================================================
+  // 8.5 Modal Legal: Términos y Condiciones / Política de Privacidad
+  // =========================================================================
+  function cambiarTabLegal(tab) {
+    if (tab === 'privacy') {
+      if (tabPrivacyBtn) {
+        tabPrivacyBtn.classList.add('active');
+        tabPrivacyBtn.setAttribute('aria-selected', 'true');
+      }
+      if (tabTermsBtn) {
+        tabTermsBtn.classList.remove('active');
+        tabTermsBtn.setAttribute('aria-selected', 'false');
+      }
+      if (legalPrivacyPane) legalPrivacyPane.style.display = 'block';
+      if (legalTermsPane) legalTermsPane.style.display = 'none';
+      if (legalModalTitle) legalModalTitle.textContent = 'Política de Privacidad y Protección de Datos';
+      if (legalModalBadgeText) legalModalBadgeText.textContent = 'Privacidad & Ley N° 19.628';
+    } else {
+      if (tabTermsBtn) {
+        tabTermsBtn.classList.add('active');
+        tabTermsBtn.setAttribute('aria-selected', 'true');
+      }
+      if (tabPrivacyBtn) {
+        tabPrivacyBtn.classList.remove('active');
+        tabPrivacyBtn.setAttribute('aria-selected', 'false');
+      }
+      if (legalTermsPane) legalTermsPane.style.display = 'block';
+      if (legalPrivacyPane) legalPrivacyPane.style.display = 'none';
+      if (legalModalTitle) legalModalTitle.textContent = 'Términos y Condiciones de Uso';
+      if (legalModalBadgeText) legalModalBadgeText.textContent = 'Marco Institucional & Convivencia';
+    }
+    if (legalModalBody) legalModalBody.scrollTop = 0;
+  }
+
+  function abrirModalLegal(tab = 'terms', scrollToId = null) {
+    if (!legalModal) return;
+    cambiarTabLegal(tab);
+    legalModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    if (scrollToId) {
+      setTimeout(() => {
+        const targetEl = document.getElementById(scrollToId);
+        if (targetEl && legalModalBody) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }
+
+  function cerrarModalLegal() {
+    if (legalModal) {
+      legalModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  }
+
+  if (footerPrivacyLink) {
+    footerPrivacyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      abrirModalLegal('privacy');
+    });
+  }
+
+  if (footerTermsLink) {
+    footerTermsLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      abrirModalLegal('terms');
+    });
+  }
+
+  if (footerCodeLink) {
+    footerCodeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      abrirModalLegal('terms', 'legalClauseConducta');
+    });
+  }
+
+  if (tabTermsBtn) {
+    tabTermsBtn.addEventListener('click', () => cambiarTabLegal('terms'));
+  }
+
+  if (tabPrivacyBtn) {
+    tabPrivacyBtn.addEventListener('click', () => cambiarTabLegal('privacy'));
+  }
+
+  if (closeLegalModalBtn) {
+    closeLegalModalBtn.addEventListener('click', cerrarModalLegal);
+  }
+
+  if (dismissLegalBtn) {
+    dismissLegalBtn.addEventListener('click', cerrarModalLegal);
+  }
+
+  if (legalModal) {
+    legalModal.addEventListener('click', (e) => {
+      if (e.target === legalModal) cerrarModalLegal();
     });
   }
 

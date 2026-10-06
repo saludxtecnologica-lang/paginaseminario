@@ -498,11 +498,11 @@
       <div class="footer-bottom">
         <p>© 2026 Reconocimiento Hospitalario. Todos los derechos reservados.</p>
         <div class="footer-legal-links">
-          <a href="#">Privacidad</a>
+          <a href="#" id="footerPrivacyLink" class="footer-legal-link">Privacidad</a>
           <span>•</span>
-          <a href="#">Términos de Uso</a>
+          <a href="#" id="footerTermsLink" class="footer-legal-link">Términos de Uso</a>
           <span>•</span>
-          <a href="#">Código de Convivencia Hospitalaria</a>
+          <a href="#" id="footerCodeLink" class="footer-legal-link">Código de Convivencia Hospitalaria</a>
         </div>
       </div>
     </div>
@@ -617,6 +617,332 @@
 
       <div class="modal-footer-action">
         <button type="button" class="btn btn-outline-nav btn-close-mentions" id="dismissMentionsBtn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE TÉRMINOS Y POLÍTICA DE PRIVACIDAD ==================== -->
+  <div class="modal-backdrop" id="legalModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+    <div class="modal-card legal-modal-card">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="auth-modal-kicker-badge" id="legalModalBadge">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span id="legalModalBadgeText">Marco Institucional &amp; Legal</span>
+          </span>
+          <h3 class="modal-title" id="legalModalTitle">Términos y Condiciones de Uso</h3>
+        </div>
+        <button class="modal-close-btn" id="closeLegalModalBtn" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <!-- Pestañas para alternar entre Términos y Privacidad -->
+      <div class="legal-tabs-nav" role="tablist" aria-label="Documentos legales">
+        <button type="button" class="legal-tab-btn active" id="tabTermsBtn" role="tab" aria-selected="true" aria-controls="legalTermsPane">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Términos de Uso
+        </button>
+        <button type="button" class="legal-tab-btn" id="tabPrivacyBtn" role="tab" aria-selected="false" aria-controls="legalPrivacyPane">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Política de Privacidad
+        </button>
+      </div>
+
+      <!-- Contenedor con scroll para los textos -->
+      <div class="legal-modal-body" id="legalModalBody">
+        <!-- ==================== PESTAÑA 1: TÉRMINOS Y CONDICIONES DE USO ==================== -->
+        <div class="legal-content-pane" id="legalTermsPane" role="tabpanel" aria-labelledby="tabTermsBtn">
+          <div class="legal-intro-banner">
+            <p>
+              El presente documento establece los Términos y Condiciones de Uso que rigen el acceso y utilización del sitio web <strong>Reconocimiento Hospitalario</strong>, disponible a través del dominio correspondiente para los funcionarios y personal de salud de la institución.
+            </p>
+            <p>
+              El acceso, navegación y envío de información a través de la Plataforma implica la aceptación plena, expresa y sin reservas de la totalidad de las disposiciones aquí establecidas. Si el Usuario no está de acuerdo con estos Términos, deberá abstenerse de utilizar el servicio.
+            </p>
+          </div>
+
+          <!-- Cláusula 1 -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Primera</span>
+              Naturaleza y Finalidad del Servicio
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                <strong>1.1.</strong> La Plataforma es una herramienta de convivencia y fortalecimiento del clima organizacional, cuyo objetivo exclusivo es promover la cultura de aprecio, compañerismo, empatía y gratitud entre el personal de salud y los colaboradores del establecimiento hospitalario.
+              </p>
+              <div class="legal-callout legal-callout-warning">
+                <div class="legal-callout-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div>
+                  <strong>1.2. Carácter no vinculante laboralmente:</strong> Se deja expresa constancia de que los reconocimientos, comentarios, menciones y estadísticas reflejadas en la Plataforma no constituyen instrumentos de evaluación de desempeño laboral, ni tienen valor vinculante sobre las calificaciones funcionarias, remuneraciones, asignaciones, sanciones disciplinarias, promociones o cualquier otro proceso contractual o estatutario del establecimiento.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cláusula 2 -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Segunda</span>
+              Condiciones de Acceso y Autenticación
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                <strong>2.1.</strong> El acceso al envío de reconocimientos está estrictamente reservado a los funcionarios activos del establecimiento.
+              </p>
+              <p>
+                <strong>2.2.</strong> Para emitir un reconocimiento, el Usuario deberá autenticarse mediante sus credenciales autorizadas: Rol Único (ID) y su Clave de Identificación Personal (PIN).
+              </p>
+              <p>
+                <strong>2.3.</strong> El PIN es de uso personal e intransferible. El Usuario es el único responsable de custodiar la confidencialidad de su clave y de toda actividad realizada bajo sus credenciales.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cláusula 3 -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Tercera</span>
+              Reglas de Participación y Ciclos de Reconocimiento
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                <strong>3.1. Límite de participación:</strong> Para garantizar la equidad del sistema, cada Usuario debidamente autenticado cuenta con el derecho a emitir un único reconocimiento por cada ciclo semanal activo.
+              </p>
+              <p>
+                <strong>3.2. Reinicio de ciclo:</strong> El sistema procesa y reinicia automáticamente la habilitación de votos todos los viernes a las 22:00 horas, momento a partir del cual se computa un nuevo ciclo de participación y actualización del «Muro de Gratitud».
+              </p>
+            </div>
+          </div>
+
+          <!-- Cláusula 4 -->
+          <div class="legal-section-block" id="legalClauseConducta">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Cuarta</span>
+              Normas de Conducta y Uso Aceptable
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                <strong>4.1.</strong> El Usuario se compromete a utilizar la Plataforma bajo principios de respeto, veracidad y buena fe.
+              </p>
+              <p>
+                <strong>4.2.</strong> Queda estrictamente prohibido utilizar los formularios y campos de texto libre para:
+              </p>
+              <ul class="legal-prohibitions-list">
+                <li>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#DC2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>Emitir comentarios ofensivos, difamatorios, calumniosos, discriminatorios o que atenten contra la dignidad o intimidad de compañeros de trabajo o pacientes.</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#DC2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>Incurrir en conductas que puedan tipificarse como acoso laboral o sexual.</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#DC2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>Formular denuncias, quejas administrativas, reclamos clínicos o reclamos asistenciales. Todo hecho que amerite investigación administrativa o disciplinaria debe canalizarse a través de las vías institucionales oficiales (OIRS, Dirección, Comité Paritario o Unidad de Personal).</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#DC2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  <span>Divulgar fichas clínicas, diagnósticos o cualquier dato sensible de pacientes del recinto asistencial, en estricto apego a la Ley N° 20.584.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Cláusula 5 -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Quinta</span>
+              Moderación y Suspensión del Servicio
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                <strong>5.1.</strong> La administración de la Plataforma se reserva el derecho de supervisar, editar o eliminar de forma inmediata, sin requerir notificación previa, cualquier contenido que vulnere estos Términos o el Código de Convivencia Hospitalaria.
+              </p>
+              <p>
+                <strong>5.2.</strong> El incumplimiento reiterado o grave de estas disposiciones facultará a la administración para revocar el PIN o bloquear temporal o definitivamente el acceso al Usuario infractor.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cláusula 6 -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">Cláusula Sexta</span>
+              Modificaciones de los Términos
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                La administración se reserva la facultad de actualizar o modificar los presentes Términos cuando sea necesario por motivos técnicos u organizacionales. Las versiones actualizadas entrarán en vigor a partir de su publicación en la Plataforma.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== PESTAÑA 2: POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS ==================== -->
+        <div class="legal-content-pane" id="legalPrivacyPane" role="tabpanel" aria-labelledby="tabPrivacyBtn" style="display: none;">
+          <div class="legal-intro-banner">
+            <p>
+              La presente Política de Privacidad describe el tratamiento que la administración de “Reconocimiento Hospitalario” otorga a los datos personales recabados a través del sitio web, en estricto cumplimiento de la legislación vigente en la República de Chile, en particular la <strong>Ley N° 19.628 sobre Protección de la Vida Privada</strong> y sus normas complementarias.
+            </p>
+          </div>
+
+          <!-- 1. Responsable del Tratamiento -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">1</span>
+              Responsable del Tratamiento
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                El tratamiento de los datos ingresados en la Plataforma es gestionado internamente con fines exclusivos de bienestar, convivencia y reconocimiento laboral dentro de la comunidad hospitalaria.
+              </p>
+            </div>
+          </div>
+
+          <!-- 2. Datos Personales Objeto de Tratamiento -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">2</span>
+              Datos Personales Objeto de Tratamiento
+            </h4>
+            <div class="legal-clause-content">
+              <p>Para garantizar el correcto funcionamiento del sistema, se recolectan y tratan los siguientes datos:</p>
+              <ul class="legal-data-items-list">
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div><strong>Datos de autenticación del emisor:</strong> Identificador institucional (RUT o número de Ficha) y Clave Personal (PIN).</div>
+                </li>
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div><strong>Datos del reconocimiento:</strong> Identificación del funcionario destacado (nombre y/o estamento/servicio), cualidades profesionales o valóricas seleccionadas, mensaje textual de agradecimiento y preferencia de visualización (pública o anónima).</div>
+                </li>
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div><strong>Metadatos técnicos:</strong> Registro de fecha, hora de emisión, identificador de ciclo y control booleano de voto emitido.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 3. Finalidades del Tratamiento -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">3</span>
+              Finalidades del Tratamiento
+            </h4>
+            <div class="legal-clause-content">
+              <p>La información proporcionada por los Usuarios será utilizada únicamente para:</p>
+              <ol class="legal-numbered-list">
+                <li>Validar la calidad de funcionario y fiscalizar la restricción de un (1) reconocimiento por Usuario en cada ciclo semanal.</li>
+                <li>Publicar los reconocimientos en el «Muro de Gratitud» y generar el resumen periódico de menciones destacadas.</li>
+                <li>Permitir la trazabilidad técnica interna con fines exclusivos de seguridad informática y moderación ante eventuales faltas a la convivencia.</li>
+              </ol>
+              <div class="legal-callout legal-callout-info">
+                <div class="legal-callout-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <strong>Garantía de Confidencialidad:</strong> Bajo ninguna circunstancia los datos recolectados serán comercializados, cedidos ni transferidos a terceras personas naturales o jurídicas ajenas al propósito de la Plataforma.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Modalidad de Publicación Anónima -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">4</span>
+              Modalidad de Publicación Anónima
+            </h4>
+            <div class="legal-clause-content">
+              <p><strong>4.1.</strong> Al completar el formulario, el Usuario puede seleccionar la modalidad de envío «Anónimo».</p>
+              <p><strong>4.2.</strong> Al optar por esta modalidad, el nombre y los datos del emisor no se desplegarán en el Muro de Gratitud ni serán visibles para el funcionario reconocido ni para el resto del personal.</p>
+              <p><strong>4.3.</strong> Los registros internos del sistema conservarán la asociación técnica de la transacción únicamente para fines de auditoría de seguridad y control de voto único, manteniéndose confidencial para la comunidad usuaria.</p>
+            </div>
+          </div>
+
+          <!-- 5. Periodo de Conservación de la Información -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">5</span>
+              Periodo de Conservación de la Información
+            </h4>
+            <div class="legal-clause-content">
+              <p><strong>5.1.</strong> El cómputo y estado de votación se resetea automáticamente cada viernes a las 22:00 horas.</p>
+              <p><strong>5.2.</strong> Los textos de agradecimiento y menciones públicas podrán permanecer archivados en la Plataforma como memoria de reconocimiento y clima positivo, mientras el servicio se encuentre operativo o hasta que se determine su depuración periódica.</p>
+            </div>
+          </div>
+
+          <!-- 6. Seguridad de la Información -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">6</span>
+              Seguridad de la Información
+            </h4>
+            <div class="legal-clause-content">
+              <p>
+                La Plataforma adopta las medidas técnicas y organizativas razonables para resguardar la confidencialidad, integridad y disponibilidad de la información almacenada, evitando su alteración, pérdida o acceso no autorizado.
+              </p>
+            </div>
+          </div>
+
+          <!-- 7. Derechos de los Titulares (ARCO) -->
+          <div class="legal-section-block">
+            <h4 class="legal-section-title">
+              <span class="legal-clause-num">7</span>
+              Derechos de los Titulares (ARCO)
+            </h4>
+            <div class="legal-clause-content">
+              <p>En conformidad con la Ley N° 19.628, los funcionarios cuyos datos figuren en la Plataforma gozan de los derechos de acceso, rectificación, cancelación y oposición respecto de su información. Si un funcionario desea:</p>
+              <ul class="legal-data-items-list">
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div>Retirar o solicitar la baja de una mención donde figure su nombre,</div>
+                </li>
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div>Rectificar un mensaje emitido por error, o</div>
+                </li>
+                <li>
+                  <div class="legal-item-bullet"></div>
+                  <div>Reportar un uso no autorizado de su identificador,</div>
+                </li>
+              </ul>
+              <p style="margin-top: 0.6rem;">
+                podrá solicitarlo directamente a la administración del sitio o al área institucional designada para la gestión del proyecto, procediéndose a la revisión y eliminación correspondiente a la brevedad.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legal-modal-footer">
+        <span class="legal-modal-footer-note">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Hospital de Puerto Montt • Ley N° 19.628 &amp; 20.584
+        </span>
+        <button type="button" class="btn btn-outline-nav btn-close-legal" id="dismissLegalBtn">Cerrar</button>
       </div>
     </div>
   </div>
