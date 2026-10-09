@@ -35,6 +35,7 @@
 
       <nav class="nav-actions" aria-label="Navegación principal">
         <a href="#inicio" class="nav-link active">Inicio</a>
+        <a href="#historia" class="nav-link" id="navStoryLink">Nuestra Historia</a>
 
         <!-- Botón de Acceso por ID y PIN (Invitado) -->
         <button class="btn btn-outline-nav" id="loginTriggerBtn">
@@ -480,6 +481,19 @@
             Promoviendo la gratitud, el respeto y la empatía en el ecosistema de la salud. Cada acto de cuidado merece
             ser reconocido.
           </p>
+
+          <!-- Botón Desplegable: Historia y Creación -->
+          <button type="button" class="btn-footer-story" id="btnToggleStory" aria-expanded="false" aria-controls="footerStoryCollapse">
+            <span class="btn-story-icon-wrap">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </span>
+            <span class="btn-story-text">Historia y Creación de la Plataforma</span>
+            <svg class="btn-story-chevron" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
         </div>
 
         <!-- Columna 2: Aviso Institucional -->
@@ -494,10 +508,130 @@
 
       </div>
 
+      <!-- ==================== SECCIÓN DESPLEGABLE: HISTORIA Y CREACIÓN ==================== -->
+      <section class="footer-story-collapse" id="footerStoryCollapse" aria-hidden="true" style="display: none;">
+        <div class="story-card" id="historia">
+          <!-- Cabecera de la sección -->
+          <div class="story-header">
+            <div class="story-header-main">
+              <div class="story-badge">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span>Iniciativa de Cuidado &amp; Bienestar • Seminario</span>
+              </div>
+              <h3 class="story-main-title">Historia y Creación de la Plataforma</h3>
+              <p class="story-main-subtitle">Un espacio nacido del aprecio sincero hacia la dedicación del equipo de salud</p>
+            </div>
+            <button type="button" class="story-close-btn" id="btnCloseStory" aria-label="Cerrar historia" title="Ocultar historia">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Contenido textual -->
+          <div class="story-body">
+            <div class="story-paragraphs">
+              <p class="story-p-lead">
+                Detrás de cada turno, cada procedimiento y cada paciente, hay un equipo humano extraordinario. Profesionales de enfermería, TENS y auxiliares que día a día entregan no solo su conocimiento, sino también su empatía y dedicación.
+              </p>
+              <p>
+                Sin embargo, en la rutina y la exigencia del trabajo hospitalario, muchas veces los pequeños (y grandes) gestos de excelencia, compañerismo y vocación pasan desapercibidos o quedan guardados en el cansancio del día a día.
+              </p>
+              <p>
+                Con esta convicción en mente, como estudiantes de Enfermería creamos esta plataforma especialmente para el equipo de <strong>Seminario</strong>. Nuestro objetivo es simple pero transformador: <strong>visibilizar y celebrar lo bueno</strong>. Queremos que este sea un espacio digital de refuerzo positivo y compañerismo, donde cualquier integrante del equipo pueda detenerse un momento, valorar el trabajo de un colega y enviarle una felicitación sincera.
+              </p>
+              <p>
+                A través de nuestro <strong>Formulario de Reconocimiento</strong> y el <strong>Muro de Gratitud</strong>, buscamos construir una cultura donde el agradecimiento sea parte del día a día, destacando a aquellos profesionales que inspiran, apoyan y hacen que el trabajo en equipo sea la mayor fortaleza del servicio.
+              </p>
+            </div>
+
+            <!-- Lema destacado -->
+            <div class="story-quote-box">
+              <div class="story-quote-heart">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
+              <blockquote class="story-quote-phrase">
+                “Porque cuidar a quienes cuidan también es parte de nuestra labor.”
+              </blockquote>
+            </div>
+
+            <!-- Créditos y colaboradores -->
+            <div class="story-credits-section">
+              <div class="story-credits-heading">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <h4>Estudiantes de 4to año de enfermería UACH</h4>
+              </div>
+
+              <!-- Lista de estudiantes -->
+              <div class="story-members-grid">
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Giulianna Cárdenas
+                </span>
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Anabel Dumenes
+                </span>
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Isskha Fehrmann
+                </span>
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Maria José Aguilar
+                </span>
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Karol Olivares
+                </span>
+                <span class="story-member-chip">
+                  <span class="member-chip-icon">✦</span>
+                  Tomás Ñancul
+                </span>
+              </div>
+
+              <!-- Docente Colaborador -->
+              <div class="story-mentor-strip">
+                <div class="mentor-strip-badge">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                  </svg>
+                  <span>Colaborador:</span>
+                  <strong>Docente Aníbal Lican</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acción al pie del acordeón para volver a replegar -->
+          <div class="story-footer-action">
+            <button type="button" class="btn-story-collapse-up" id="btnFoldStory">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+              <span>Ocultar historia</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- Legal / Copyright -->
       <div class="footer-bottom">
         <p>© 2026 Reconocimiento Hospitalario. Todos los derechos reservados.</p>
         <div class="footer-legal-links">
+          <a href="#historia" id="footerStoryLink" class="footer-legal-link">Nuestra Historia</a>
+          <span>•</span>
           <a href="#" id="footerPrivacyLink" class="footer-legal-link">Privacidad</a>
           <span>•</span>
           <a href="#" id="footerTermsLink" class="footer-legal-link">Términos de Uso</a>

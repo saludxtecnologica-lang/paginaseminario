@@ -968,6 +968,83 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // =========================================================================
+  // Control Desplegable: Historia y Creación de la Plataforma
+  // =========================================================================
+  const btnToggleStory = document.getElementById('btnToggleStory');
+  const footerStoryLink = document.getElementById('footerStoryLink');
+  const navStoryLink = document.getElementById('navStoryLink');
+  const footerStoryCollapse = document.getElementById('footerStoryCollapse');
+  const btnCloseStory = document.getElementById('btnCloseStory');
+  const btnFoldStory = document.getElementById('btnFoldStory');
+
+  function toggleHistoria(forceOpen = null, shouldScroll = true) {
+    if (!footerStoryCollapse) return;
+
+    const isCurrentlyOpen = footerStoryCollapse.style.display !== 'none';
+    const willOpen = forceOpen !== null ? forceOpen : !isCurrentlyOpen;
+
+    if (willOpen) {
+      footerStoryCollapse.style.display = 'block';
+      footerStoryCollapse.setAttribute('aria-hidden', 'false');
+      if (btnToggleStory) {
+        btnToggleStory.setAttribute('aria-expanded', 'true');
+        const textSpan = btnToggleStory.querySelector('.btn-story-text');
+        if (textSpan) textSpan.textContent = 'Ocultar Historia';
+      }
+      if (shouldScroll) {
+        setTimeout(() => {
+          footerStoryCollapse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
+      }
+    } else {
+      footerStoryCollapse.style.display = 'none';
+      footerStoryCollapse.setAttribute('aria-hidden', 'true');
+      if (btnToggleStory) {
+        btnToggleStory.setAttribute('aria-expanded', 'false');
+        const textSpan = btnToggleStory.querySelector('.btn-story-text');
+        if (textSpan) textSpan.textContent = 'Historia y Creación de la Plataforma';
+      }
+    }
+  }
+
+  if (btnToggleStory) {
+    btnToggleStory.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleHistoria();
+    });
+  }
+
+  if (btnCloseStory) {
+    btnCloseStory.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleHistoria(false, false);
+    });
+  }
+
+  if (btnFoldStory) {
+    btnFoldStory.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleHistoria(false, false);
+      const brandLogo = document.querySelector('.footer-logo');
+      if (brandLogo) brandLogo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  if (footerStoryLink) {
+    footerStoryLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleHistoria(true, true);
+    });
+  }
+
+  if (navStoryLink) {
+    navStoryLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleHistoria(true, true);
+    });
+  }
+
+  // =========================================================================
   // 9. Cargar y Renderizar Reconocimientos en el Muro (Top 5 con Corazones)
   // =========================================================================
   async function cargarReconocimientosPublicos() {
